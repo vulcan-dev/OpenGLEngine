@@ -1,0 +1,202 @@
+make all -f "/home/vulcandev/Programming/Repos/OpenGLEngine/CPP/VKE/Makefile" -C "/home/vulcandev/Programming/Repos/OpenGLEngine/CPP/VKE/" --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 4.2.1
+# Built for x86_64-pc-linux-gnu
+# Copyright (C) 1988-2016 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+
+# Make data base, printed on Sun Oct 17 13:32:19 2021
+
+# Variables
+
+# environment
+GNUMAKEFLAGS := 
+# environment
+DESKTOP_SESSION = plasma
+# default
+.SHELLFLAGS := -c
+# environment
+XDG_SESSION_CLASS = user
+# environment
+XDG_SESSION_TYPE = x11
+# environment
+VSCODE_LOG_NATIVE = false
+# environment
+XAUTHORITY = /run/user/1000/gdm/Xauthority
+# environment
+GDMSESSION = plasma
+# environment
+SHELL = /bin/bash
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-gb","availableLanguages":{},"_languagePackSupport":true}
+# environment
+_ = /usr/share/code/code
+# environment
+QT_AUTO_SCREEN_SCALE_FACTOR = 0
+# environment
+XDG_CONFIG_DIRS = /etc/xdg/xdg-plasma:/etc/xdg
+# environment
+USERNAME = vulcandev
+# environment
+MANDATORY_PATH = /usr/share/gconf/plasma.mandatory.path
+# environment
+XDG_DATA_DIRS = /usr/share/plasma:/home/vulcandev/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
+# environment
+DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+LESSOPEN = | /usr/bin/lesspipe %s
+# environment
+VSCODE_CWD = /home/vulcandev/Programming/Repos
+# environment
+PATH = /home/vulcandev/.cargo/bin:/home/vulcandev/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+# environment
+GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
+# environment
+XCURSOR_THEME = macOSBigSur
+# environment
+SESSION_MANAGER = local/pop-os:@/tmp/.ICE-unix/1872,unix/pop-os:/tmp/.ICE-unix/1872
+# environment
+XDG_RUNTIME_DIR = /run/user/1000
+# environment
+VSCODE_LOG_STACK = false
+# environment
+VSCODE_CRASH_REPORTER_START_OPTIONS = {"companyName":"Microsoft","productName":"VSCode","submitURL":"appcenter://code?aid=fba07a4d-84bd-4fc8-a125-9640fc8ce171&uid=e3f1aaee-5301-4d50-9f9f-6aa2cd152ac2&iid=e3f1aaee-5301-4d50-9f9f-6aa2cd152ac2&sid=e3f1aaee-5301-4d50-9f9f-6aa2cd152ac2","uploadToServer":true}
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
+# environment
+LS_COLORS = 
+# environment
+XDG_SESSION_DESKTOP = plasma
+# environment
+SSH_AUTH_SOCK = /tmp/ssh-YE19kPBiFsuM/agent.1713
+# environment
+DISPLAY = :1
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+PWD = /home/vulcandev/Programming/Repos/OpenGLEngine
+# environment
+KDE_SESSION_VERSION = 5
+# default
+.LOADED := 
+# environment
+XDG_SEAT = seat0
+# environment
+SSH_AGENT_PID = 1792
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = KDE
+# environment
+GTK_MODULES = gail:atk-bridge
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/services/extensions/node/extensionHostProcess
+# environment
+HOME = /home/vulcandev
+# environment
+LESSCLOSE = /usr/bin/lesspipe %s %s
+# environment
+VSCODE_CODE_CACHE_PATH = /home/vulcandev/.config/Code/CachedData/c13f1abb110fc756f9b3a6f16670df9cd9d4cf63
+# environment
+LOGNAME = vulcandev
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+# environment
+KDE_FULL_SESSION = true
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# environment
+XDG_VTNR = 2
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := all
+# environment
+SHLVL = 0
+# environment
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-df3cfd65-a5b7-4158-a322-cc8d2659597f.sock
+# environment
+XDG_SESSION_ID = 2
+# environment
+USER = vulcandev
+# environment
+XDG_CURRENT_DESKTOP = KDE
+# default
+MAKE_COMMAND := make
+# default
+.VARIABLES := 
+# environment
+LANGUAGE = 
+# environment
+VSCODE_IPC_HOOK = /run/user/1000/vscode-dabeab4d-1.61.1-main.sock
+# environment
+BREAKPAD_DUMP_LOCATION = /home/vulcandev/.config/Code/exthost Crash Reports
+# environment
+GDK_BACKEND = x11
+# environment
+NO_AT_BRIDGE = 1
+# environment
+QT_ACCESSIBILITY = 1
+# environment
+DEFAULTS_PATH = /usr/share/gconf/plasma.default.path
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# environment
+LC_ALL = C
+# environment
+CHROME_DESKTOP = code-url-handler.desktop
+# environment
+WINDOWPATH = 2
+# default
+.RECIPEPREFIX := 
+# environment
+LANG = C
+# environment
+VSCODE_PID = 9621
+# environment
+KDE_SESSION_UID = 1000
+# variable set hash-table stats:
+# Load=73/1024=7%, Rehash=0, Collisions=6/77=8%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+
+# No files, no impossibilities in 0 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+# Not a target:
+all:
+#  Command line target.
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# files hash-table stats:
+# Load=1/1024=0%, Rehash=0, Collisions=0/1=0%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 3 / storage = 124 B / avg = 41 B
+# current buf: size = 8162 B / used = 124 B / count = 3 / avg = 41 B
+
+# strcache performance: lookups = 4 / hit rate = 25%
+# hash-table stats:
+# Load=3/8192=0%, Rehash=0, Collisions=0/4=0%
+# Finished Make data base on Sun Oct 17 13:32:19 2021
+
+ 
+make: *** /home/vulcandev/Programming/Repos/OpenGLEngine/CPP/VKE/: No such file or directory.  Stop.
+ 
