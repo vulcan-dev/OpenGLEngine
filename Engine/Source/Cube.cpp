@@ -99,12 +99,12 @@ CCube::CCube() {
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
     glVertexAttribPointer(
-        1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-        3,                                // size
-        GL_FLOAT,                         // type
-        GL_FALSE,                         // normalized?
-        0,                                // stride
-        (void*)0                          // array buffer offset
+        1,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        0,
+        (void*)0
     );
 
     programID = Shader::LoadFromFile( "Shaders/SimpleVertexShader.vs", "Shaders/SimpleFragmentShader.fs" );
@@ -113,11 +113,11 @@ CCube::CCube() {
     mvp = Globals::Projection * Globals::View * glm::mat4(1.0f);
 
     ModelMatrix = Globals::Projection * Globals::View * glm::mat4(1.0f);
-    ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.f, 0.f, 1.f));
+    ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.f, 0.f, 0.f));
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(1.f, 0.f, 0.f));
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(0.f, 1.f, 0.f));
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(0.f), glm::vec3(0.f, 0.f, 1.f));
-    ModelMatrix = glm::scale(ModelMatrix, glm::vec3(1.f));
+    ModelMatrix = glm::scale(ModelMatrix, glm::vec3(2.f));
 
     ModelMatrixID = glGetUniformLocation(programID, "ModelMatrix");
 }
@@ -137,4 +137,18 @@ void CCube::Render() {
 
 void CCube::SetRotation(const float& angle) {
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(angle), glm::vec3(1.f, 0.f, 0.f));
+    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(angle), glm::vec3(0.f, 1.f, 0.f));
+    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(angle), glm::vec3(0.f, 0.f, 1.f));
+}
+
+void CCube::SetRotationX(const float& angle) {
+    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(angle), glm::vec3(1.f, 0.f, 0.f));
+}
+
+void CCube::SetRotationY(const float& angle) {
+    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(angle), glm::vec3(0.f, 1.f, 0.f));
+}
+
+void CCube::SetRotationZ(const float& angle) {
+    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(angle), glm::vec3(0.f, 0.f, 1.f));
 }

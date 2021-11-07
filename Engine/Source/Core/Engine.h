@@ -17,10 +17,15 @@ public:
 
     virtual ~CEngine();
 
+private:
+    static void error_callback(int error, const char* description);
+    static void window_size_callback(GLFWwindow* window, int width, int height);
+
 protected:
     inline bool IsRunning() { return !glfwWindowShouldClose(this->m_Window); }
     inline GLFWwindow* GetWindow() { return this->m_Window; }
     inline const float& GetDeltaTime() const { return this->m_DeltaTime; }
+    uint32_t m_WindowWidth, m_WindowHeight;
 
 private:
     void CreateWindow();
@@ -28,7 +33,6 @@ private:
     void UpdateInput();
 
 private:
-    uint32_t m_WindowWidth, m_WindowHeight;
     std::string_view m_WindowTitle;
 
     GLFWwindow* m_Window;

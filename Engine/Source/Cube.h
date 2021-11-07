@@ -9,6 +9,9 @@ public:
     CCube();
 
     void SetRotation(const float& angle);
+    void SetRotationX(const float& angle);
+    void SetRotationY(const float& angle);
+    void SetRotationZ(const float& angle);
 
     void Render();
 

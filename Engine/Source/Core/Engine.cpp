@@ -2,13 +2,20 @@
 
 #include "../Global.h"
 
-static void error_callback(int error, const char* description) {
+void CEngine::error_callback(int error, const char* description) {
     CORE_ERROR("GLFW Error: {} - {}", error, description);
+}
+
+void CEngine::window_size_callback(GLFWwindow* window, int width, int height) {
+    Globals::Projection = glm::perspective(glm::radians(90.0f), (float)width / (float)height, 0.1f, 100.0f);
+    glViewport(0, 0, width, height);
+    CORE_INFO("Window Resize: New Size = {} x {}", width, height);
+    CORE_INFO("Projection: {}", Globals::Projection[0][0]);
 }
 
 CEngine::CEngine(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle) :
         m_WindowWidth(windowWidth), m_WindowHeight(windowHeight), m_WindowTitle(windowTitle) {
-    glfwSetErrorCallback(error_callback);
+    glfwSetErrorCallback(this->error_callback);
 
     if (!glfwInit()) {
         CORE_CRITICAL("glfwInit failed");
@@ -25,6 +32,8 @@ CEngine::CEngine(const uint32_t& windowWidth, const uint32_t& windowHeight, std:
         glm::vec3(0,0,0), // and looks at the origin
         glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
     );
+
+    glfwSetFramebufferSizeCallback(this->m_Window, this->window_size_callback);
 }
 
 void CEngine::CreateWindow() {
@@ -57,7 +66,7 @@ void CEngine::UpdateTime() {
 }
 
 void CEngine::Render() {
-
+    
 }
 
 CEngine::~CEngine() {

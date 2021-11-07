@@ -7,7 +7,7 @@ CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHe
     while (CEngine::IsRunning()) {
         this->Update();
         this->Render();
-        this->m_Cube->SetRotation(2 * this->GetDeltaTime());
+        this->m_Cube->SetRotation(40 * this->GetDeltaTime());
     }
 }
 
