@@ -1,12 +1,12 @@
 #ifndef CUBE_H
 #define CUBE_H
 
-#include <glm/glm.hpp>
 #include <GL/glew.h>
+#include "Core/Camera.h"
 
 class CCube {
 public:
-    CCube(const glm::vec3& colour = glm::vec3(1.f, 1.f, 1.f));
+    CCube(CCamera* camera, const glm::vec3& colour = glm::vec3(1.f, 1.f, 1.f));
 
     void SetPosition(const glm::vec3& pos);
     void SetPositionX(const float& x) { this->m_Position[0] = x; }
@@ -31,6 +31,7 @@ private:
     GLuint m_ProgramID = 0;
     GLuint m_VAO, m_VBO = 0;
 
+    CCamera* m_Camera;
 };
 
 #endif

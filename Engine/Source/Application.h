@@ -2,6 +2,7 @@
 #define CAPPLICATION_H
 
 #include "Core/Engine.h"
+#include "Core/Input.h"
 #include "Cube.h"
 
 class CApplication : public CEngine {
@@ -17,8 +18,15 @@ private:
     CCube* m_Cube;
     CCube* m_Cube2;
     CCube* m_Cube3;
-    CCube* m_Cube4;
-    CCube* m_Cube5;
+
+    CCamera* m_Camera;
+    CInput* m_Input;
+
+    glm::vec3 m_Position;
+    float m_CameraMoveSpeed;
+    float m_MouseMoveSpeed;
+
+    std::vector<int> m_Keys;
 };
 
 #endif

@@ -12,7 +12,7 @@ unsigned long indicieCount;
 
 uint8_t cubeCount;
 
-CCube::CCube(const glm::vec3& colour) {
+CCube::CCube(CCamera* camera, const glm::vec3& colour) {
     Vertex vertices[] = {
         // side 1
         glm::vec3(-1.0f,-1.0f,-1.0f), colour,
@@ -98,6 +98,8 @@ CCube::CCube(const glm::vec3& colour) {
     cubeCount++;
 #endif
 
+    this->m_Camera = camera;
+
     // auto vertexCount = sizeof(vertices) / sizeof(Vertex);
     indicieCount = sizeof(indices) / sizeof(GLuint);
 
@@ -129,7 +131,7 @@ CCube::CCube(const glm::vec3& colour) {
     this->m_Scale = glm::vec3(1.f);
 
     this->m_ViewMatrix = glm::mat4(1.f);
-    this->m_ViewMatrix = Globals::Projection * Globals::View * glm::mat4(1.0f);
+    this->m_ViewMatrix = camera->GetProjection() * camera->GetView() * glm::mat4(1.f);
 
     this->m_ModelMatrix = glm::mat4(1.f);
     this->m_ModelMatrix *= glm::translate(glm::mat4(1.f), this->m_Position);
@@ -148,7 +150,7 @@ CCube::CCube(const glm::vec3& colour) {
 
 void CCube::Render() {    
     this->m_ViewMatrix = glm::mat4(1.f);
-    this->m_ViewMatrix *= Globals::Projection * Globals::View * glm::mat4(1.0f);
+    this->m_ViewMatrix = this->m_Camera->GetProjection() * this->m_Camera->GetView() * glm::mat4(1.f);
 
     this->m_ModelMatrix = glm::mat4(1.f);
     this->m_ModelMatrix *= glm::translate(glm::mat4(1.f), this->m_Position);
@@ -172,10 +174,6 @@ void CCube::SetRotation(const float& angle) {
     this->m_Rotation.x = angle;
     this->m_Rotation.y = angle;
     this->m_Rotation.z = angle;
-
-    // this->m_ModelMatrix = glm::rotate(this->m_ModelMatrix, glm::radians(angle), glm::vec3(1.f, 0.f, 0.f));
-    // this->m_ModelMatrix = glm::rotate(this->m_ModelMatrix, glm::radians(angle), glm::vec3(0.f, 1.f, 0.f));
-    // this->m_ModelMatrix = glm::rotate(this->m_ModelMatrix, glm::radians(angle), glm::vec3(0.f, 0.f, 1.f));
 }
 
 void CCube::SetPosition(const glm::vec3& pos) {
@@ -184,15 +182,12 @@ void CCube::SetPosition(const glm::vec3& pos) {
 
 void CCube::SetRotationX(const float& angle) {
     this->m_Rotation.x = angle;
-    CORE_DEBUG("SRX: {}", angle);
 }
 
 void CCube::SetRotationY(const float& angle) {
     this->m_Rotation.y = angle;
-    CORE_DEBUG("SRY: {}", angle);
 }
 
 void CCube::SetRotationZ(const float& angle) {
     this->m_Rotation.z = angle;
-    CORE_DEBUG("SRZ: {}", angle);
 }

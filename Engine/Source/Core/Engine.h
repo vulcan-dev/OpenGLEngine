@@ -27,6 +27,8 @@ protected:
     inline const float& GetDeltaTime() const { return this->m_DeltaTime; }
     uint32_t m_WindowWidth, m_WindowHeight;
 
+    double m_MousePositionX, m_MousePositionY;
+
 private:
     void CreateWindow();
     void UpdateTime();

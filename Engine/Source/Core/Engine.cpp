@@ -1,6 +1,7 @@
 #include "Engine.h"
 
 #include "../Global.h"
+#include <glm/gtx/string_cast.hpp>
 
 void CEngine::error_callback(int error, const char* description) {
     CORE_ERROR("GLFW Error: {} - {}", error, description);
@@ -30,14 +31,6 @@ CEngine::CEngine(const uint32_t& windowWidth, const uint32_t& windowHeight, std:
     glFrontFace(GL_CCW);
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
-
-    // TODO: Move to a seperate class (Camera)
-    Globals::Projection = glm::perspective(glm::radians(90.0f), (float)this->m_WindowWidth / (float)this->m_WindowHeight, 0.1f, 100.0f);
-    Globals::View = glm::lookAt(
-        glm::vec3(0, 0, 5), // Camera is at (4,3,3), in World Space
-        glm::vec3(0, 0, 0), // and looks at the origin
-        glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-    );
 
     glfwSetFramebufferSizeCallback(this->m_Window, this->window_size_callback);
 
@@ -76,7 +69,7 @@ void CEngine::Update() {
 }
 
 void CEngine::UpdateInput() {
-
+    glfwGetCursorPos(this->m_Window, &this->m_MousePositionX, &this->m_MousePositionY);
 }
 
 void CEngine::UpdateTime() {
