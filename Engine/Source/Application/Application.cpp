@@ -5,9 +5,31 @@ bool firstMouse = true;
 
 CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle)
 : CEngine(windowWidth, windowHeight, windowTitle) {
+    APP_INFO("Application Started");
+
     this->m_LastX = this->m_WindowWidth / 2.0f;
     this->m_LastY = this->m_WindowHeight / 2.0f;
 
+    this->m_Position = glm::vec3(0, 0, 5);
+
+    this->m_Camera = std::make_unique<CCamera>((float)this->m_WindowWidth, (float)this->m_WindowHeight, glm::vec3(0.f, 0.f, 5.f));
+    this->m_Camera->SetFieldOfView(this->m_FieldOfView);
+    this->m_Camera->SetMovementSpeed(this->m_CameraMoveSpeed);
+    this->m_Camera->SetMouseSensitivity(.1f);
+
+    this->InitializeKeybinds();
+    this->InitializeObjects();
+
+    this->m_CameraMoveSpeed = 4.5f;
+    this->m_FieldOfView = 90.f;
+
+    while (CEngine::IsRunning()) {
+        this->Update();
+        this->Render();
+    }
+}
+
+void CApplication::InitializeKeybinds() {
     glfwSetInputMode(this->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     this->m_Keys.push_back(GLFW_KEY_W);
@@ -19,30 +41,19 @@ CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHe
     this->m_Keys.push_back(GLFW_KEY_LEFT_SHIFT);
     this->m_Keys.push_back(GLFW_KEY_SPACE);
 
-    this->m_Input = new CInput(this->m_Keys);
+    this->m_Input = std::make_unique<CInput>(this->m_Keys);
     this->m_Input->SetIsEnabled(true);
     this->m_Input->SetupKeyInputs(*this->GetWindow());
+}
 
-    // this->m_CameraMoveSpeed = 5.f;
-    // this->m_MouseMoveSpeed = 100.f;
-    this->m_CameraMoveSpeed = 4.5f;
+void CApplication::InitializeObjects() {
+    this->m_Cubes.push_back(std::make_shared<CCube>(this->m_Camera.get(), glm::vec3(1.f, 0.f, 0.f)));
+    this->m_Cubes.push_back(std::make_shared<CCube>(this->m_Camera.get(), glm::vec3(0.f, 1.f, 0.f)));
+    this->m_Cubes.push_back(std::make_shared<CCube>(this->m_Camera.get(), glm::vec3(0.f, 0.f, 1.f)));
 
-    APP_INFO("Application Started");
-    this->m_Position = glm::vec3(0, 0, 5);
-    this->m_Camera = new CCamera((float)this->m_WindowWidth, (float)this->m_WindowHeight, glm::vec3(0.f, 0.f, 5.f));
-
-    this->m_Cube = new CCube(this->m_Camera, glm::vec3(1.f, 0.f, 0.f));
-    this->m_Cube2 = new CCube(this->m_Camera, glm::vec3(0.f, 1.f, 0.f));
-    this->m_Cube3 = new CCube(this->m_Camera, glm::vec3(0.f, 0.f, 1.f));
-
-    this->m_Cube->SetPosition(glm::vec3(-2.5f, 0.f, 0.f));
-    this->m_Cube2->SetPosition(glm::vec3(0.f, 0.f, 0.f));
-    this->m_Cube3->SetPosition(glm::vec3(2.5f, 0.f, 0.f));
-
-    while (CEngine::IsRunning()) {
-        this->Update();
-        this->Render();
-    }
+    this->m_Cubes[0].get()->SetPosition(glm::vec3(-2.5f, 0.f, 0.f));
+    this->m_Cubes[1].get()->SetPosition(glm::vec3(0.f, 0.f, 0.f));
+    this->m_Cubes[2].get()->SetPosition(glm::vec3(2.5f, 0.f, 0.f));
 }
 
 void CApplication::Update() {
@@ -71,9 +82,9 @@ void CApplication::UpdateCamera() {
 }
 
 void CApplication::UpdateObjects() {
-    // this->m_Cube->SetRotation(120 * glfwGetTime());
-    // this->m_Cube2->SetRotation(120 * glfwGetTime());
-    // this->m_Cube3->SetRotation(120 * glfwGetTime());
+    for (const auto& cube : this->m_Cubes) {
+        cube.get()->SetRotation(60 * glfwGetTime());
+    }
 }
 
 void CApplication::UpdateControls() {
@@ -117,20 +128,14 @@ void CApplication::UpdateControls() {
 void CApplication::Render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    this->m_Cube->Render();
-    this->m_Cube2->Render();
-    this->m_Cube3->Render();
+    for (const auto& cube : this->m_Cubes) {
+        cube.get()->Render();
+    }
 
     glfwSwapBuffers(this->GetWindow());
     glfwPollEvents();
 }
 
 CApplication::~CApplication() {
-    delete this->m_Input;
-    delete this->m_Camera;
-    delete this->m_Cube;
-    delete this->m_Cube2;
-    delete this->m_Cube3;
-
     APP_INFO("Exiting Application");
 }

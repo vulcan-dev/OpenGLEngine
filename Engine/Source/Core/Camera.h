@@ -20,7 +20,12 @@ public:
     inline const glm::vec3& GetWorldUp() const { return this->m_WorldUp; };
     inline const glm::vec3& GetUp() const { return this->m_Up; };
 
-    void SetPosition(glm::vec3 pos) { this->m_Position = pos; }
+public:
+    void SetPosition(const glm::vec3& position) { this->m_Position = position; }
+    void SetMovementSpeed(const float& speed) { this->m_MovementSpeed = speed; }
+    void SetFieldOfView(const float& fov) { this->m_FieldOfView = fov; }
+    void SetMouseSensitivity(const float& sensitivity) { this->m_MouseSensitivity = sensitivity; }
+
 private:
     glm::vec3 m_Position;
     glm::vec3 m_Front;

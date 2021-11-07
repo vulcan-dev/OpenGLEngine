@@ -9,6 +9,9 @@ class CApplication : public CEngine {
 public:
     CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle);
 
+    void InitializeKeybinds();
+    void InitializeObjects();
+
     void Update();
     void UpdateCamera();
     void UpdateObjects();
@@ -18,18 +21,16 @@ public:
     ~CApplication();
 
 private:
-    CCube* m_Cube;
-    CCube* m_Cube2;
-    CCube* m_Cube3;
+    std::vector<std::shared_ptr<CCube>> m_Cubes;
 
-    CCamera* m_Camera;
-    CInput* m_Input;
+    std::unique_ptr<CCamera> m_Camera;
+    std::unique_ptr<CInput> m_Input;
 
     glm::vec3 m_Position;
     float m_CameraMoveSpeed;
-    float m_MouseMoveSpeed;
 
     float m_LastX, m_LastY;
+    float m_FieldOfView;
 
     std::vector<int> m_Keys;
 };
