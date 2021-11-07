@@ -22,6 +22,8 @@ configure_file(Engine/Source/RootDir.h.in Engine/Source/RootDir.h)
 
 include_directories(HEADER_FILES)
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DEBUG_MODE")
+
 # The main executable
 add_executable(main
   ${SOURCE_FILES}

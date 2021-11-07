@@ -25,7 +25,13 @@ CEngine::CEngine(const uint32_t& windowWidth, const uint32_t& windowHeight, std:
     this->CreateWindow();
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
+
+    // TODO: Move to a seperate class (Camera)
     Globals::Projection = glm::perspective(glm::radians(90.0f), (float)this->m_WindowWidth / (float)this->m_WindowHeight, 0.1f, 100.0f);
     Globals::View = glm::lookAt(
         glm::vec3(0, 0, 5), // Camera is at (4,3,3), in World Space
@@ -34,6 +40,18 @@ CEngine::CEngine(const uint32_t& windowWidth, const uint32_t& windowHeight, std:
     );
 
     glfwSetFramebufferSizeCallback(this->m_Window, this->window_size_callback);
+
+    glGetIntegerv(GL_MAJOR_VERSION, &this->m_OpenGLMajor);
+    glGetIntegerv(GL_MINOR_VERSION, &this->m_OpenGLMinor);
+    CORE_INFO("OpenGL Version: {}.{}", this->m_OpenGLMajor, this->m_OpenGLMinor);
+    CORE_INFO("Version: {}", glGetString(GL_VERSION));
+    CORE_INFO("Graphics Card: {}", glGetString(GL_RENDERER));
+    CORE_INFO("Shader Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    
+    GLint extensionCount = 0; 
+    glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount); 
+
+    CORE_INFO("{} Extensions Supported", extensionCount);
 }
 
 void CEngine::CreateWindow() {
@@ -45,6 +63,8 @@ void CEngine::CreateWindow() {
 
     this->m_Window = glfwCreateWindow(this->m_WindowWidth, this->m_WindowHeight, this->m_WindowTitle.data(), nullptr, nullptr);
     CORE_INFO("Created Window: {} x {}", this->m_WindowWidth, this->m_WindowHeight);
+
+    glfwSetWindowSizeLimits(this->m_Window, 800, 600, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
     glfwMakeContextCurrent(this->m_Window);
     glewInit();

@@ -40,6 +40,8 @@ private:
     float m_DeltaTime;
     float m_CurrentTime;
     float m_LastTime;
+
+    GLint m_OpenGLMajor, m_OpenGLMinor;
 };
 
 #endif

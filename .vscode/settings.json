@@ -1,6 +1,9 @@
 {
     "makefile.extensionOutputFolder": "./.vscode",
     "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
+    "workbench.colorCustomizations": {
+        "progressBar.background": "#fff0",
+    },
     "files.associations": {
         "iostream": "cpp",
         "array": "cpp",

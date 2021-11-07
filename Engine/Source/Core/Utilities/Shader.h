@@ -44,7 +44,7 @@ namespace Shader {
         int InfoLogLength;
 
         // Compile Vertex Shader
-        CORE_INFO("Compiling Shader: {}", vertex_file_path);
+        // CORE_INFO("Compiling Shader: {}", vertex_file_path);
         char const * VertexSourcePointer = VertexShaderCode.c_str();
         glShaderSource(VertexShaderID, 1, &VertexSourcePointer , NULL);
         glCompileShader(VertexShaderID);
@@ -59,7 +59,7 @@ namespace Shader {
         }
 
         // Compile Fragment Shader
-        CORE_INFO("Compiling Shader: {}", fragment_file_path);
+        // CORE_INFO("Compiling Shader: {}", fragment_file_path);
         char const * FragmentSourcePointer = FragmentShaderCode.c_str();
         glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer , NULL);
         glCompileShader(FragmentShaderID);
@@ -74,7 +74,7 @@ namespace Shader {
         }
 
         // Link the program
-        CORE_INFO("Linking Program");
+        // CORE_INFO("Linking Program");
         GLuint ProgramID = glCreateProgram();
         glAttachShader(ProgramID, VertexShaderID);
         glAttachShader(ProgramID, FragmentShaderID);

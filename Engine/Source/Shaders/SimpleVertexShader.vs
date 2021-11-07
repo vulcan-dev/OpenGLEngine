@@ -6,11 +6,10 @@ layout(location = 1) in vec3 vertexColor;
 out vec3 fragmentColor;
 out vec3 vs_position;
 
-uniform mat4 MVP;
-uniform mat4 ModelMatrix;
+uniform mat4 VP; // camera
+uniform mat4 ModelMatrix; // transform
   
 void main(){
-  vs_position = vec4(ModelMatrix * vec4(vertexPosition_modelspace, 0)).xyz;
-  fragmentColor = vertexColor;
-  gl_Position = ModelMatrix * vec4(vertexPosition_modelspace, 2);
+    fragmentColor = vertexColor;
+    gl_Position = VP * vec4(vec3(ModelMatrix * vec4(vertexPosition_modelspace, 1.f)), 1.f);
 }
