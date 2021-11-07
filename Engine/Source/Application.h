@@ -15,6 +15,10 @@ public:
 
 private:
     CCube* m_Cube;
+    CCube* m_Cube2;
+    CCube* m_Cube3;
+    CCube* m_Cube4;
+    CCube* m_Cube5;
 };
 
 #endif

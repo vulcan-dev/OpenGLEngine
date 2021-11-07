@@ -10,7 +10,7 @@ uniform mat4 MVP;
 uniform mat4 ModelMatrix;
   
 void main(){
-  vs_position = vec4(ModelMatrix * vec4(vertexPosition_modelspace, 1.f)).xyz;
+  vs_position = vec4(ModelMatrix * vec4(vertexPosition_modelspace, 0)).xyz;
   fragmentColor = vertexColor;
-  gl_Position = ModelMatrix * vec4(vertexPosition_modelspace, 1.f);
+  gl_Position = ModelMatrix * vec4(vertexPosition_modelspace, 2);
 }

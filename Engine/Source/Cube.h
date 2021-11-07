@@ -8,6 +8,7 @@ class CCube {
 public:
     CCube();
 
+    void SetPosition(const glm::vec3& pos);
     void SetRotation(const float& angle);
     void SetRotationX(const float& angle);
     void SetRotationY(const float& angle);

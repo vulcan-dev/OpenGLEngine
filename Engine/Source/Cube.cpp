@@ -135,6 +135,10 @@ void CCube::Render() {
     glDisableVertexAttribArray(0);
 }
 
+void CCube::SetPosition(const glm::vec3& pos) {
+    ModelMatrix = glm::translate(ModelMatrix, pos);
+}
+
 void CCube::SetRotation(const float& angle) {
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(angle), glm::vec3(1.f, 0.f, 0.f));
     ModelMatrix = glm::rotate(ModelMatrix, glm::radians(angle), glm::vec3(0.f, 1.f, 0.f));
