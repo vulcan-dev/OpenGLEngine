@@ -1,6 +1,9 @@
-make -f "/home/vulcandev/Programming/Repos/OpenGLEngine/CPP/VKE/Makefile" -C "/home/vulcandev/Programming/Repos/OpenGLEngine/CPP/VKE/" --dry-run --always-make --keep-going --print-directory
+make -f "/home/vulcandev/Programming/Repos/OpenGLEngine/Makefile" --dry-run --always-make --keep-going --print-directory
 make: Entering directory '/home/vulcandev/Programming/Repos/OpenGLEngine'
 make: Leaving directory '/home/vulcandev/Programming/Repos/OpenGLEngine'
  
-make: *** /home/vulcandev/Programming/Repos/OpenGLEngine/CPP/VKE/: No such file or directory.  Stop.
+make: /home/vulcandev/Programming/Repos/OpenGLEngine/Makefile: No such file or directory
+make: *** No rule to make target '/home/vulcandev/Programming/Repos/OpenGLEngine/Makefile'.
+make: Failed to remake makefile '/home/vulcandev/Programming/Repos/OpenGLEngine/Makefile'.
+make: *** No targets specified and no makefile found.  Stop.
  
