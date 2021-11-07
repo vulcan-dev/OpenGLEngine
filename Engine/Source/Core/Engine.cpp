@@ -82,6 +82,11 @@ void CEngine::Render() {
     
 }
 
+void CEngine::Shutdown() {
+    
+    glfwTerminate();
+}
+
 CEngine::~CEngine() {
     glfwTerminate();
 }

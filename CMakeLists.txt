@@ -4,6 +4,7 @@ project (OpenGLEngine)
 
 file(GLOB_RECURSE SOURCE_FILES 
 	Engine/Source/*.cpp
+	Engine/Source/Application/*.cp
 	Engine/Source/Core/*.cpp
 	Engine/Source/Core/Utilities/*.cpp)
 	
@@ -15,6 +16,7 @@ file(GLOB_RECURSE HEADER_FILES
 	lib/glm/
 
 	Engine/Source/*.h
+	Engine/Source/Application/*.h
 	Engine/Source/Core/*.h
 	Engine/Source/Core/Utilities/*.h)
 

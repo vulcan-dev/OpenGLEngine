@@ -29,6 +29,8 @@ protected:
 
     double m_MousePositionX, m_MousePositionY;
 
+    void Shutdown();
+
 private:
     void CreateWindow();
     void UpdateTime();

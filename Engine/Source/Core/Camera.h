@@ -3,49 +3,42 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/string_cast.hpp>
-#include "Utilities/Logger.h"
+
+#include <vector>
 
 class CCamera {
 public:
-    CCamera(const float& windowWidth, const float& windowHeight, const glm::vec3& position = glm::vec3(0, 0, 5), const glm::vec3& head = glm::vec3(0, 1, 0), const glm::vec3& lookAt = glm::vec3(0, 0, 0));
+    CCamera(const float& width, const float& height, const glm::vec3& position = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3& up = glm::vec3(0.0f, 1.0f, 0.0f), const float& yaw = -90.f, const float& pitch = 0.f);
 
-    glm::mat4 GetProjection() { return this->m_Projection; }
-    glm::mat4 GetView() { return this->m_View; }
+    void Update(float xoffset, float yoffset, bool constrainPitch);
 
-    glm::vec3 GetPosition() { return this->m_PositionWorldSpace; }
-    glm::vec3 GetLookAt() { return this->m_LookAt; }
-    glm::vec3 GetHead() { return this->m_Head; }
+    inline const glm::mat4& GetProjection() const { return this->m_Projection; }
+    inline glm::mat4 GetView() { return glm::lookAt(this->m_Position, this->m_Position + this->m_Front, this->m_Up); }
 
-    void LookAt(const glm::vec3 lookAt) {
-        this->m_LookAt = lookAt;
-    }
+    inline const glm::vec3& GetFront() const { return this->m_Front; };
+    inline const glm::vec3& GetRight() const { return this->m_Right; };
+    inline const glm::vec3& GetWorldUp() const { return this->m_WorldUp; };
+    inline const glm::vec3& GetUp() const { return this->m_Up; };
 
-    void SetPosition(const glm::vec3& position) {
-        this->m_PositionWorldSpace = position;
-
-        this->m_View = glm::lookAt(
-            this->m_PositionWorldSpace,
-            this->m_LookAt,
-            this->m_Head
-        );
-
-        CORE_DEBUG("m_LookAt: {}", glm::to_string(this->m_LookAt));
-    }
-    
-    void SetLookAt(const glm::vec3& lookAt) { this->m_LookAt = lookAt; }
-    void SetHead(const glm::vec3& head) { this->m_Head = head; }
-
-    void SetFieldOfView(const float& fov) { this->m_FieldOfView = fov; }
+    void SetPosition(glm::vec3 pos) { this->m_Position = pos; }
 private:
+    glm::vec3 m_Position;
+    glm::vec3 m_Front;
     glm::mat4 m_Projection;
-    glm::mat4 m_View;
+    glm::vec3 m_Up;
+    glm::vec3 m_Right;
+    glm::vec3 m_WorldUp;
 
-    glm::vec3 m_PositionWorldSpace;
-    glm::vec3 m_LookAt;
-    glm::vec3 m_Head;
+    float m_Yaw;
+    float m_Pitch;
 
+    float m_MovementSpeed;
+    float m_MouseSensitivity;
     float m_FieldOfView;
+
+private:
+    void UpdateCameraVectors();
+    void ProcessMouseMovement(float xoffset, float yoffset, const bool& constrainPitch = true);
 };
 
 #endif
