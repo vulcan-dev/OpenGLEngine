@@ -6,7 +6,6 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include "Utilities/Logger.h"
-#include "../Global.h"
 
 class CEngine {
 public:
