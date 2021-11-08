@@ -1,11 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include <string_view>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include "Utilities/Logger.h"
+#include "Include.h"
 
 class CEngine {
 public:
@@ -28,8 +24,6 @@ protected:
 
     double m_MousePositionX, m_MousePositionY;
 
-    void Shutdown();
-
 private:
     void CreateWindow();
     void UpdateTime();
@@ -43,6 +37,7 @@ private:
     float m_DeltaTime;
     float m_CurrentTime;
     float m_LastTime;
+    uint16_t m_Framerate;
 
     GLint m_OpenGLMajor, m_OpenGLMinor;
 };

@@ -1,6 +1,6 @@
 #include "Skybox.h"
 
-#include "Core/Utilities/Shader.h"
+#include "Shader.h"
 
 #include <string>
 #define STB_IMAGE_IMPLEMENTATION
@@ -10,7 +10,18 @@
 
 unsigned long ic;
 
-CSkybox::CSkybox(CCamera* camera) {
+CSkybox::CSkybox(CCamera* camera, std::vector<std::string> faces) {
+    if (faces.empty()) {
+        faces = {
+            "Skybox/Default/right.jpg",
+            "Skybox/Default/left.jpg",
+            "Skybox/Default/top.jpg",
+            "Skybox/Default/bottom.jpg",
+            "Skybox/Default/front.jpg",
+            "Skybox/Default/back.jpg"
+        };
+    }
+
     float vertices[] = {
         // positions          
         -1.0f,  1.0f, -1.0f,
@@ -62,15 +73,6 @@ CSkybox::CSkybox(CCamera* camera) {
         1.0f, -1.0f,  1.0f
     };
 
-    std::vector<std::string> faces = {
-        "skybox/right.jpg",
-        "skybox/left.jpg",
-        "skybox/top.jpg",
-        "skybox/bottom.jpg",
-        "skybox/front.jpg",
-        "skybox/back.jpg"
-    };
-
     auto vertexCount = sizeof(vertices) / sizeof(float);
 
     this->texture = LoadCubemap(faces);
@@ -89,34 +91,34 @@ CSkybox::CSkybox(CCamera* camera) {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);;
     glEnableVertexAttribArray(0);
 
-    glBindVertexArray(0);   
-
-    this->m_ProgramID = Shader::LoadFromFile("Shaders/Skybox.vs", "Shaders/Skybox.fs");
-    this->m_ViewMatrixID = glGetUniformLocation(this->m_ProgramID, "VP");
-
-    this->m_ViewMatrix = glm::mat4(1.f);
-    this->m_ViewMatrix = camera->GetView() * glm::mat4(1.f);
-
-    this->m_ModelMatrixID = glGetUniformLocation(this->m_ProgramID, "ModelMatrix");
-
-    glUseProgram(this->m_ProgramID);
-    glUniformMatrix4fv(this->m_ViewMatrixID, 1, GL_FALSE, glm::value_ptr(this->m_ViewMatrix));
-    glUniformMatrix4fv(this->m_ViewMatrixID, 1, GL_FALSE, glm::value_ptr(this->m_Camera->GetProjection()));
-    glUseProgram(0);
-
-    CORE_DEBUG("{}", glm::to_string(this->m_Camera->GetView()));
+    glBindVertexArray(0);
 }
 
-void CSkybox::Render() {
+void CSkybox::UpdateUniforms(CShader* shader) {
+    shader->SetMat4fv(this->m_ModelMatrix, "ModelMatrix");
+}
+
+void CSkybox::UpdateModelMatrix() {
+    this->m_ModelMatrix = glm::mat4(1.f);
+    this->m_ModelMatrix = glm::translate(this->m_ModelMatrix, this->m_Origin);
+    this->m_ModelMatrix = glm::rotate(this->m_ModelMatrix, glm::radians(this->m_Rotation.x), glm::vec3(1.f, 0.f, 0.f));
+    this->m_ModelMatrix = glm::rotate(this->m_ModelMatrix, glm::radians(this->m_Rotation.y), glm::vec3(0.f, 1.f, 0.f));
+    this->m_ModelMatrix = glm::rotate(this->m_ModelMatrix, glm::radians(this->m_Rotation.z), glm::vec3(0.f, 0.f, 1.f));
+    this->m_ModelMatrix = glm::translate(this->m_ModelMatrix, this->m_Position - this->m_Origin);
+    this->m_ModelMatrix = glm::scale(this->m_ModelMatrix, this->m_Scale);
+}
+
+void CSkybox::Render(CShader* shader, CCamera* camera) {
+    this->UpdateModelMatrix();
+    this->UpdateUniforms(shader);
+
+    this->m_ViewMatrix = glm::mat4(glm::mat3(camera->GetView()));
+
+    shader->SetMat4fv(this->m_ViewMatrix, "ModelMatrix");
+    shader->SetMat4fv(camera->GetProjection(), "VP");
+
+    shader->Bind();
     glDepthFunc(GL_LEQUAL);
-    glUseProgram(m_ProgramID);
-    this->m_ViewMatrix = glm::mat4(1.f);
-    this->m_ViewMatrix = glm::mat4(glm::mat3(this->m_Camera->GetView()));
-
-    glUniformMatrix4fv(this->m_ModelMatrixID, 1, GL_FALSE, glm::value_ptr(this->m_ViewMatrix));
-    glUniformMatrix4fv(this->m_ViewMatrixID, 1, GL_FALSE, glm::value_ptr(this->m_Camera->GetProjection()));
-
-    glDepthMask(GL_FALSE);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, this->texture);
@@ -139,9 +141,7 @@ unsigned int CSkybox::LoadCubemap(std::vector<std::string> faces) {
     for (unsigned int i = 0; i < faces.size(); i++) {
         unsigned char *data = stbi_load(fmt::format("../{}/{}", ROOT_DIR, faces[i].c_str()).c_str(), &width, &height, &nrChannels, 0);
         if (data) {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 
-                         0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
-            );
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
         } else {
             CORE_ERROR("Failed loading cubemap: {}", faces[i]);

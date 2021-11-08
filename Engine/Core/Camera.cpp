@@ -8,12 +8,20 @@ CCamera::CCamera(const float& width, const float& height, const glm::vec3& posit
     this->m_MouseSensitivity = .1f;
     this->m_FieldOfView = 60;
 
-    this->m_Projection = glm::perspective(glm::radians(this->m_FieldOfView), width / height, 0.5f, 1000.0f);
+    this->m_Projection = glm::perspective(glm::radians(this->m_FieldOfView), width / height, 0.1f, 1000.0f);
     this->m_Position = position;
     this->m_WorldUp = up;
     this->m_Yaw = yaw;
     this->m_Pitch = pitch;
+
     this->UpdateCameraVectors();
+}
+
+void CCamera::UpdateUniforms(CShader* shader) {
+    auto vm = this->GetProjection() * this->GetView() * glm::mat4(1.f);
+
+    shader->SetMat4fv(vm, "VP");
+    shader->SetVec3f(this->m_Position, "cameraPos");
 }
 
 void CCamera::Update(float xoffset, float yoffset, bool constrainPitch) {
@@ -35,13 +43,11 @@ void CCamera::ProcessMouseMovement(float xoffset, float yoffset, const bool& con
 }
 
 void CCamera::UpdateCameraVectors() {
-    glm::vec3 front;
+    this->m_Front.x = cos(glm::radians(this->m_Yaw)) * cos(glm::radians(this->m_Pitch));
+    this->m_Front.y = sin(glm::radians(this->m_Pitch));
+    this->m_Front.z = sin(glm::radians(this->m_Yaw)) * cos(glm::radians(this->m_Pitch));
 
-    front.x = cos(glm::radians(this->m_Yaw)) * cos(glm::radians(this->m_Pitch));
-    front.y = sin(glm::radians(this->m_Pitch));
-    front.z = sin(glm::radians(this->m_Yaw)) * cos(glm::radians(this->m_Pitch));
-
-    this->m_Front = glm::normalize(front);
+    this->m_Front = glm::normalize(this->m_Front);
     this->m_Right = glm::normalize(glm::cross(this->m_Front, this->m_WorldUp));
     this->m_Up = glm::normalize(glm::cross(this->m_Right, this->m_Front));
 }

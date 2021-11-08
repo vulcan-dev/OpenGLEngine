@@ -1,6 +1,8 @@
 #include "Engine.h"
 
 #include <glm/gtx/string_cast.hpp>
+#include <string>
+#include <vector>
 
 void CEngine::error_callback(int error, const char* description) {
     CORE_ERROR("GLFW Error: {} - {}", error, description);
@@ -25,11 +27,9 @@ CEngine::CEngine(const uint32_t& windowWidth, const uint32_t& windowHeight, std:
     this->CreateWindow();
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    // glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
-
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // GL_FILL
 
     glfwSetFramebufferSizeCallback(this->m_Window, this->window_size_callback);
 
@@ -75,15 +75,12 @@ void CEngine::UpdateTime() {
     this->m_CurrentTime = static_cast<float>(glfwGetTime());
     this->m_DeltaTime = this->m_CurrentTime - this->m_LastTime;
     this->m_LastTime = this->m_CurrentTime;
+
+    this->m_Framerate = static_cast<int16_t>(1.f/this->m_DeltaTime);
 }
 
 void CEngine::Render() {
-    
-}
 
-void CEngine::Shutdown() {
-    
-    glfwTerminate();
 }
 
 CEngine::~CEngine() {

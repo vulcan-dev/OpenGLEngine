@@ -55,6 +55,7 @@
         "tuple": "cpp",
         "typeinfo": "cpp",
         "utility": "cpp",
-        "*.in": "cpp"
+        "*.in": "cpp",
+        "map": "cpp"
     }
 }

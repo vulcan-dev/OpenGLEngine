@@ -1,10 +1,8 @@
 #ifndef CAPPLICATION_H
 #define CAPPLICATION_H
 
-#include "../Core/Engine.h"
-#include "../Core/Input.h"
-#include "../Skybox.h"
-#include "../Cube.h"
+#include "../Engine/Engine.h"
+#include <map>
 
 class CApplication : public CEngine {
 public:
@@ -13,19 +11,28 @@ public:
     void InitializeKeybinds();
     void InitializeObjects();
 
-    void Update();
+    void Update() override;
     void UpdateCamera();
     void UpdateObjects();
     void UpdateControls();
-    void Render();
+    
+    void Render() override;
 
     ~CApplication();
 
 private:
-    std::vector<std::shared_ptr<CCube>> m_Cubes;
+    // std::unique_ptr<CShader> m_Shader;
+    std::map<std::string, std::unique_ptr<CShader>> m_Shaders;
 
     std::unique_ptr<CCamera> m_Camera;
     std::unique_ptr<CInput> m_Input;
+
+    std::unique_ptr<CMaterial> m_Material;
+    std::unique_ptr<CTexture> m_Sheen;
+    std::unique_ptr<CTexture> m_Specular;
+    std::unique_ptr<CTexture> m_Sky;
+    std::vector<CMesh*> m_Meshes;
+    std::vector<CModel*> m_Models;
 
     std::unique_ptr<CSkybox> m_Skybox;
 

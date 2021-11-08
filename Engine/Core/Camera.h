@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "../Shader.h"
 
 #include <vector>
 
@@ -11,9 +12,10 @@ public:
     CCamera(const float& width, const float& height, const glm::vec3& position = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3& up = glm::vec3(0.0f, 1.0f, 0.0f), const float& yaw = -90.f, const float& pitch = 0.f);
 
     void Update(float xoffset, float yoffset, bool constrainPitch);
+    void UpdateUniforms(CShader* shader);
 
     inline const glm::mat4& GetProjection() const { return this->m_Projection; }
-    inline glm::mat4 GetView() { return glm::lookAt(this->m_Position, this->m_Position + this->m_Front, this->m_Up); }
+    inline glm::mat4 GetView() { this->UpdateCameraVectors(); return glm::lookAt(this->m_Position, this->m_Position + this->m_Front, this->m_Up); }
 
     inline const glm::vec3& GetFront() const { return this->m_Front; };
     inline const glm::vec3& GetRight() const { return this->m_Right; };
