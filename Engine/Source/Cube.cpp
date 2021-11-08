@@ -99,7 +99,7 @@ CCube::CCube(CCamera* camera, const glm::vec3& colour) {
 
     this->m_Camera = camera;
 
-    // auto vertexCount = sizeof(vertices) / sizeof(Vertex);
+    auto vertexCount = sizeof(vertices) / sizeof(Vertex);
     indicieCount = sizeof(indices) / sizeof(GLuint);
 
     glCreateVertexArrays(1, &this->m_VAO);

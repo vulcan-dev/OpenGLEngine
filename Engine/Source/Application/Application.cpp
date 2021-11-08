@@ -12,16 +12,18 @@ CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHe
 
     this->m_Position = glm::vec3(0, 0, 5);
 
+    this->m_CameraMoveSpeed = 4.5f;
+    this->m_FieldOfView = 60.f;
+
     this->m_Camera = std::make_unique<CCamera>((float)this->m_WindowWidth, (float)this->m_WindowHeight, glm::vec3(0.f, 0.f, 5.f));
     this->m_Camera->SetFieldOfView(this->m_FieldOfView);
     this->m_Camera->SetMovementSpeed(this->m_CameraMoveSpeed);
     this->m_Camera->SetMouseSensitivity(.1f);
 
+    this->m_Skybox = std::make_unique<CSkybox>(this->m_Camera.get());
+
     this->InitializeKeybinds();
     this->InitializeObjects();
-
-    this->m_CameraMoveSpeed = 4.5f;
-    this->m_FieldOfView = 90.f;
 
     while (CEngine::IsRunning()) {
         this->Update();
@@ -128,6 +130,7 @@ void CApplication::UpdateControls() {
 void CApplication::Render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    this->m_Skybox->Render();
     for (const auto& cube : this->m_Cubes) {
         cube.get()->Render();
     }

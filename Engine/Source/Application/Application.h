@@ -3,6 +3,7 @@
 
 #include "../Core/Engine.h"
 #include "../Core/Input.h"
+#include "../Skybox.h"
 #include "../Cube.h"
 
 class CApplication : public CEngine {
@@ -25,6 +26,8 @@ private:
 
     std::unique_ptr<CCamera> m_Camera;
     std::unique_ptr<CInput> m_Input;
+
+    std::unique_ptr<CSkybox> m_Skybox;
 
     glm::vec3 m_Position;
     float m_CameraMoveSpeed;
