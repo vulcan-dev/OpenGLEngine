@@ -17,6 +17,7 @@ public:
     inline const glm::mat4& GetProjection() const { return this->m_Projection; }
     inline glm::mat4 GetView() { this->UpdateCameraVectors(); return glm::lookAt(this->m_Position, this->m_Position + this->m_Front, this->m_Up); }
 
+    inline const glm::vec3& GetPosition() const { return this->m_Position; }
     inline const glm::vec3& GetFront() const { return this->m_Front; };
     inline const glm::vec3& GetRight() const { return this->m_Right; };
     inline const glm::vec3& GetWorldUp() const { return this->m_WorldUp; };

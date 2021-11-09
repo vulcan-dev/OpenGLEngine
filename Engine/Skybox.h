@@ -4,11 +4,13 @@
 #include "Core/Camera.h"
 #include "Shader.h"
 #include <GL/glew.h>
+#include "Mesh/Vertex.h"
+#include "Mesh/Texture.h"
 #include <string>
 
 class CSkybox {
 public:
-    CSkybox(CCamera* camera, std::vector<std::string> faces = std::initializer_list<std::string>{});
+    CSkybox(CCamera* camera, CTexture* a = nullptr, CTexture* b = nullptr, std::vector<std::string> faces = std::initializer_list<std::string>{});
     unsigned int LoadCubemap(std::vector<std::string> faces);
     void Render(CShader* shader, CCamera* camera);
 
@@ -28,6 +30,9 @@ private:
     CCamera* m_Camera;
     GLuint m_VAO, m_VBO = 0;
     GLuint m_ProgramID = 0;
+
+    CTexture* m_TextureDiffuse;
+    CTexture* m_TextureSpecular;
 
     // glm::vec3 m_Position, m_Rotation, m_Scale = glm::vec3(0.f);
     unsigned int texture;

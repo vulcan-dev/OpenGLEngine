@@ -19,6 +19,8 @@ CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHe
     this->m_Sheen = std::make_unique<CTexture>("Textures/Box.png", GL_TEXTURE_2D);
     this->m_Specular = std::make_unique<CTexture>("Textures/BoxSpecularMap.png", GL_TEXTURE_2D);
 
+    this->m_Sky = std::make_unique<CTexture>("Textures/panorama.jpg", GL_TEXTURE_ENV);
+
     this->m_Shaders["Core"] = std::make_unique<CShader>("Shaders/SimpleVertexShader.vs", "Shaders/SimpleFragmentShader.fs", "");
     this->m_Shaders["Skybox"] = std::make_unique<CShader>("Shaders/Skybox.vs", "Shaders/Skybox.fs", "");
 
@@ -27,7 +29,7 @@ CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHe
     this->m_Camera->SetMovementSpeed(this->m_CameraMoveSpeed);
     this->m_Camera->SetMouseSensitivity(.1f);
 
-    this->m_Skybox = std::make_unique<CSkybox>(this->m_Camera.get());
+    this->m_Skybox = std::make_unique<CSkybox>(this->m_Camera.get(), this->m_Sky.get());
 
     this->InitializeKeybinds();
     this->InitializeObjects();

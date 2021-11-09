@@ -10,7 +10,10 @@
 
 unsigned long ic;
 
-CSkybox::CSkybox(CCamera* camera, std::vector<std::string> faces) {
+CSkybox::CSkybox(CCamera* camera, CTexture* a, CTexture* b, std::vector<std::string> faces) {
+    this->m_TextureDiffuse = a;
+    // this->m_TextureSpecular = b; // might be normal idk
+
     if (faces.empty()) {
         faces = {
             "Skybox/Default/right.jpg",
@@ -88,8 +91,14 @@ CSkybox::CSkybox(CCamera* camera, std::vector<std::string> faces) {
     glBindBuffer(GL_ARRAY_BUFFER, this->m_VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);;
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
+    glEnableVertexAttribArray(2);
 
     glBindVertexArray(0);
 }
@@ -109,15 +118,20 @@ void CSkybox::UpdateModelMatrix() {
 }
 
 void CSkybox::Render(CShader* shader, CCamera* camera) {
+	this->m_TextureDiffuse->Bind(0);
     this->UpdateModelMatrix();
     this->UpdateUniforms(shader);
 
     this->m_ViewMatrix = glm::mat4(glm::mat3(camera->GetView()));
 
+    shader->SetMat4fv(camera->GetProjection(), "ProjectionMatrix");
     shader->SetMat4fv(this->m_ViewMatrix, "ModelMatrix");
-    shader->SetMat4fv(camera->GetProjection(), "VP");
+    shader->SetVec3f(camera->GetPosition(), "CameraPosition");
 
     shader->Bind();
+
+	// this->m_TextureSpecular->Bind(1);
+
     glDepthFunc(GL_LEQUAL);
 
     glActiveTexture(GL_TEXTURE0);
