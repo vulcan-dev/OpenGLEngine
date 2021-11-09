@@ -9,7 +9,6 @@
 #include "Core/Input.h"
 
 #include "Render/Camera.h"
-#include "Render/Skybox.h"
 #include "Render/Shader.h"
 
 #include "Render/Mesh/Model.h"

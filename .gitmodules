@@ -10,12 +10,3 @@
 [submodule "lib/spdlog"]
 	path = lib/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "lib/stb"]
-	path = lib/stb
-	url = https://github.com/nothings/stb
-[submodule "lib/SOIL2"]
-	path = lib/SOIL2
-	url = https://github.com/SpartanJ/SOIL2
-[submodule "lib/tinyobjloader"]
-	path = lib/tinyobjloader
-	url = https://github.com/tinyobjloader/tinyobjloader

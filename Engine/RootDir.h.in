@@ -1,2 +1,2 @@
 #pragma once
-#define ROOT_DIR "/Engine/"
+#define ROOT_DIR "/Resources/"

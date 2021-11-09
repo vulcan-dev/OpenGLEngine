@@ -3,28 +3,18 @@ cmake_minimum_required (VERSION 3.1)
 project (OpenGLEngine)
 
 file(GLOB_RECURSE SOURCE_FILES 
+	Engine/ThirdParty/*.c
 	Engine/*.cpp
 	Application/*.cpp
-	Engine/Mesh/*.cpp
-	Engine/Core/*.cpp
-	lib/SOIL2/src/SOIL2
-	lib/tinyobjloader/
-	Engine/Core/Utilities/*.cpp)
+)
 	
 # Add header files
 file(GLOB_RECURSE HEADER_FILES
 	lib/spdlog/include
 	lib/glfw/include
 	lib/glew/include
-	lib/SOIL2/src/SOIL2
 	lib/glm/
-	lib/tinyobjloader/
-
-	Engine/*.h
-	Application/*.h
-	Engine/Mesh/*.h
-	Engine/Core/*.h
-	Engine/Core/Utilities/*.h)
+)
 
 configure_file(Engine/RootDir.h.in Engine/RootDir.h)
 
@@ -33,9 +23,7 @@ include_directories(HEADER_FILES)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DEBUG_MODE")
 
 # The main executable
-add_executable(main
-  ${SOURCE_FILES}
-)
+add_executable(main ${SOURCE_FILES})
 
 set(LIBS glfw libglew_static glm spdlog::spdlog)
 

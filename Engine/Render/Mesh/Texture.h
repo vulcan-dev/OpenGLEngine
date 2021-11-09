@@ -5,7 +5,9 @@
 #include <glm/glm.hpp>
 #include <string_view>
 #include "../../Core/Utilities/Logger.h"
-#include "../../Core/stb_image.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "../../ThirdParty/stb_image.h"
 
 class CTexture {
 public:
