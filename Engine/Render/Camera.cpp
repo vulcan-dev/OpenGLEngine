@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-#include "Utilities/Logger.h"
+#include "../Core/Utilities/Logger.h"
 
 CCamera::CCamera(const float& width, const float& height, const glm::vec3& position, const glm::vec3& up, const float& yaw, const float& pitch) {
     this->m_Front = glm::vec3(0.0f, 0.0f, -1.0f);

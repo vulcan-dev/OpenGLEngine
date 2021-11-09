@@ -1,12 +1,12 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "RootDir.h.in"
+#include "../RootDir.h.in"
 #include <fstream>
 #include <sstream>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
-#include "Core/Utilities/Logger.h"
+#include "../Core/Utilities/Logger.h"
 #include <GL/gl.h>
 
 class CShader {

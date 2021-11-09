@@ -4,7 +4,7 @@
 
 #include <string>
 #define STB_IMAGE_IMPLEMENTATION
-#include "Core/stb_image.h"
+#include "../Core/stb_image.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 

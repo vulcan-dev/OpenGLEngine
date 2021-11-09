@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 #include <vector>
-#include "Vertex.h"
+#include "../Vertex.h"
 
 class CPrimitive {
 public:

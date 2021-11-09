@@ -5,7 +5,7 @@
 #include "Material.h"
 #include "Texture.h"
 #include "Mesh.h"
-#include "../Core/OBJLoader.h"
+#include "../../Core/OBJLoader.h"
 #include <vector>
 
 class CModel {

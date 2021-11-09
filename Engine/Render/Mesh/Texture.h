@@ -4,8 +4,8 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <string_view>
-#include "../Core/Utilities/Logger.h"
-#include "../Core/stb_image.h"
+#include "../../Core/Utilities/Logger.h"
+#include "../../Core/stb_image.h"
 
 class CTexture {
 public:
@@ -13,10 +13,8 @@ public:
         filename = fmt::format("..{}/{}", ROOT_DIR, filename.c_str());
         this->m_Type = type;
 
-        int cp;
-
-        // unsigned char* image = SOIL_load_image(filename.data(), &this->m_Width, &this->m_Height, nullptr, SOIL_LOAD_RGBA);
-        unsigned char* image = stbi_load(filename.c_str(), &this->m_Width, &this->m_Height, &cp, 4);
+        int component;
+        unsigned char* image = stbi_load(filename.c_str(), &this->m_Width, &this->m_Height, &component, 4);
 
         glGenTextures(1, &this->m_ID);
         glBindTexture(type, this->m_ID);

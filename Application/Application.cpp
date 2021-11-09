@@ -15,21 +15,17 @@ CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHe
     this->m_CameraMoveSpeed = 4.5f;
     this->m_FieldOfView = 60.f;
 
+    this->m_Textures["BOX_DIFFUSE"] = std::make_unique<CTexture>("Textures/Box.png", GL_TEXTURE_2D);
+    this->m_Textures["BOX_SPECULAR"] = std::make_unique<CTexture>("Textures/BoxSpecularMap.png", GL_TEXTURE_2D);
+
     this->m_Material = std::make_unique<CMaterial>(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), 0, 1);
-    this->m_Sheen = std::make_unique<CTexture>("Textures/Box.png", GL_TEXTURE_2D);
-    this->m_Specular = std::make_unique<CTexture>("Textures/BoxSpecularMap.png", GL_TEXTURE_2D);
 
-    this->m_Sky = std::make_unique<CTexture>("Textures/panorama.jpg", GL_TEXTURE_ENV);
-
-    this->m_Shaders["Core"] = std::make_unique<CShader>("Shaders/SimpleVertexShader.vs", "Shaders/SimpleFragmentShader.fs", "");
-    this->m_Shaders["Skybox"] = std::make_unique<CShader>("Shaders/Skybox.vs", "Shaders/Skybox.fs", "");
+    this->m_Shaders["Core"] = std::make_unique<CShader>("Shaders/VertexCore.vs", "Shaders/FragmentCore.fs", "");
 
     this->m_Camera = std::make_unique<CCamera>((float)this->m_WindowWidth, (float)this->m_WindowHeight, glm::vec3(0.f, 0.f, 5.f));
     this->m_Camera->SetFieldOfView(this->m_FieldOfView);
     this->m_Camera->SetMovementSpeed(this->m_CameraMoveSpeed);
     this->m_Camera->SetMouseSensitivity(.1f);
-
-    this->m_Skybox = std::make_unique<CSkybox>(this->m_Camera.get(), this->m_Sky.get());
 
     this->InitializeKeybinds();
     this->InitializeObjects();
@@ -71,15 +67,15 @@ void CApplication::InitializeObjects() {
         )
     );
 
-    this->m_Models.push_back(
-        new CModel(
-            glm::vec3(0.f),
-            this->m_Material.get(),
-            this->m_Sheen.get(),
-            this->m_Specular.get(),
-            m_Meshes
-        )
-    );
+    // this->m_Models.push_back(
+    //     new CModel(
+    //         glm::vec3(0.f),
+    //         this->m_Material.get(),
+    //         this->m_Textures["BOX_DIFFUSE"].get(),
+    //         this->m_Textures["BOX_SPECULAR"].get(),
+    //         m_Meshes
+    //     )
+    // );
 
     this->m_Meshes.push_back(
         new CMesh(
@@ -91,15 +87,15 @@ void CApplication::InitializeObjects() {
         )
     );
 
-    this->m_Models.push_back(
-        new CModel(
-            glm::vec3(0.f),
-            this->m_Material.get(),
-            this->m_Sheen.get(),
-            this->m_Specular.get(),
-            m_Meshes
-        )
-    );
+    // this->m_Models.push_back(
+    //     new CModel(
+    //         glm::vec3(0.f),
+    //         this->m_Material.get(),
+    //         this->m_Textures["BOX_DIFFUSE"].get(),
+    //         this->m_Textures["BOX_SPECULAR"].get(),
+    //         m_Meshes
+    //     )
+    // );
 }
 
 void CApplication::Update() {
@@ -113,8 +109,6 @@ void CApplication::UpdateCamera() {
     for (const auto& shader : this->m_Shaders) {
         this->m_Camera->UpdateUniforms(shader.second.get());
     }
-
-    // this->m_Camera->UpdateUniforms(this->m_Shaders["Core"].get());
 
     if (this->m_MousePositionX != this->m_LastX || this->m_MousePositionY != this->m_LastY) {
         if (firstMouse) {
@@ -134,9 +128,7 @@ void CApplication::UpdateCamera() {
 }
 
 void CApplication::UpdateObjects() {
-    // for (const auto& cube : this->m_Cubes) {
-    //     cube.get()->SetRotation(60 * glfwGetTime());
-    // }
+
 }
 
 void CApplication::UpdateControls() {
@@ -180,12 +172,10 @@ void CApplication::UpdateControls() {
 }
 
 void CApplication::Render() {
-	// glClearColor(0.f, 0.f, 0.f, 1.f);
+	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    this->m_Skybox->Render(this->m_Shaders["Skybox"].get(), m_Camera.get());
-    
-    for (const auto& obj : this->m_Models) {
+    for (const auto& obj : this->m_Meshes) {
         obj->Render(this->m_Shaders["Core"].get());
     }
 

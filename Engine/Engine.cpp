@@ -27,9 +27,11 @@ CEngine::CEngine(const uint32_t& windowWidth, const uint32_t& windowHeight, std:
     this->CreateWindow();
 
     glEnable(GL_DEPTH_TEST);
-    // glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
+
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
     glfwSetFramebufferSizeCallback(this->m_Window, this->window_size_callback);
 

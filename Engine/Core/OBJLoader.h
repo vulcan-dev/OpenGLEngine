@@ -21,7 +21,7 @@
 #include<glm/gtc/type_ptr.hpp>
 
 //Own libs
-#include "../Mesh/Vertex.h"
+#include "../Render/Mesh/Vertex.h"
 
 static std::vector<Vertex> LoadOBJ(const char* file_name)
 {

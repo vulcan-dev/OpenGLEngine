@@ -4,9 +4,9 @@
 #include <GL/glew.h>
 #include "Vertex.h"
 #include "../Shader.h"
-#include "Primitive.h"
+#include "Primitive/Primitive.h"
 #include <glm/glm.hpp>
-#include "../Core/Camera.h"
+#include "../Camera.h"
 
 class CMesh {
 public:

@@ -1,7 +1,6 @@
 #version 440
 
-struct Material
-{
+struct Material {
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
@@ -16,11 +15,10 @@ in vec3 vs_normal;
 
 out vec3 fs_color;
 
-//Uniforms
 uniform Material material;
 uniform vec3 cameraPos;
 
 void main() {
 	fs_color = vec3(texture(material.diffuseTex, vs_texcoord));
-	// fs_color = vs_color;
+	fs_color = vs_color;
 }

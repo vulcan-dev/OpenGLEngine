@@ -21,20 +21,16 @@ public:
     ~CApplication();
 
 private:
-    // std::unique_ptr<CShader> m_Shader;
     std::map<std::string, std::unique_ptr<CShader>> m_Shaders;
+    std::map<std::string, std::unique_ptr<CTexture>> m_Textures;
 
     std::unique_ptr<CCamera> m_Camera;
     std::unique_ptr<CInput> m_Input;
 
     std::unique_ptr<CMaterial> m_Material;
-    std::unique_ptr<CTexture> m_Sheen;
-    std::unique_ptr<CTexture> m_Specular;
-    std::unique_ptr<CTexture> m_Sky;
+
     std::vector<CMesh*> m_Meshes;
     std::vector<CModel*> m_Models;
-
-    std::unique_ptr<CSkybox> m_Skybox;
 
     glm::vec3 m_Position;
     float m_CameraMoveSpeed;

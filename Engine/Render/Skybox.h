@@ -1,7 +1,7 @@
 #ifndef SKYBOX_H
 #define SKYBOX_H
 
-#include "Core/Camera.h"
+#include "Camera.h"
 #include "Shader.h"
 #include <GL/glew.h>
 #include "Mesh/Vertex.h"
