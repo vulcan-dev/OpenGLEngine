@@ -9,27 +9,37 @@
 
 class CCamera {
 public:
-    CCamera(const float& width, const float& height, const glm::vec3& position = glm::vec3(0.0f, 0.0f, 0.0f), const glm::vec3& up = glm::vec3(0.0f, 1.0f, 0.0f), const float& yaw = -90.f, const float& pitch = 0.f);
+    CCamera(
+        const CCamera& obj,
+        const float& width, const float& height, 
+        const glm::vec3& position = glm::vec3(0.0f, 0.0f, 0.0f), 
+        const glm::vec3& up = glm::vec3(0.0f, 1.0f, 0.0f), 
+        const float& yaw = -90.f, const float& pitch = 0.f
+    ) {
+        this->m_Position = position;
+        this->m_WorldUp = up;
+        this->m_Yaw = yaw;
+        this->m_Pitch = pitch;
+    }
 
-    void Update(float xoffset, float yoffset, bool constrainPitch);
-    void UpdateUniforms(CShader* shader);
+    virtual void Update(float xoffset, float yoffset, bool constrainPitch) = 0;
+    virtual void UpdateUniforms(CShader* shader) = 0;
 
-    inline const glm::mat4& GetProjection() const { return this->m_Projection; }
-    inline glm::mat4 GetView() { this->UpdateCameraVectors(); return glm::lookAt(this->m_Position, this->m_Position + this->m_Front, this->m_Up); }
+    virtual inline const glm::mat4& GetProjection() = 0;
+    virtual inline glm::mat4 GetView() = 0;
 
-    inline const glm::vec3& GetPosition() const { return this->m_Position; }
-    inline const glm::vec3& GetFront() const { return this->m_Front; };
-    inline const glm::vec3& GetRight() const { return this->m_Right; };
-    inline const glm::vec3& GetWorldUp() const { return this->m_WorldUp; };
-    inline const glm::vec3& GetUp() const { return this->m_Up; };
+    virtual inline const glm::vec3& GetPosition() = 0;
+    virtual inline const glm::vec3& GetFront() = 0;
+    virtual inline const glm::vec3& GetRight() = 0;
+    virtual inline const glm::vec3& GetWorldUp() = 0;
+    virtual inline const glm::vec3& GetUp() = 0;
 
-public:
-    void SetPosition(const glm::vec3& position) { this->m_Position = position; }
-    void SetMovementSpeed(const float& speed) { this->m_MovementSpeed = speed; }
-    void SetFieldOfView(const float& fov) { this->m_FieldOfView = fov; }
-    void SetMouseSensitivity(const float& sensitivity) { this->m_MouseSensitivity = sensitivity; }
+    virtual void SetPosition(const glm::vec3& position) = 0;
+    virtual void SetMovementSpeed(const float& speed) = 0;
+    virtual void SetFieldOfView(const float& fov) = 0;
+    virtual void SetMouseSensitivity(const float& sensitivity) = 0;
 
-private:
+protected:
     glm::vec3 m_Position;
     glm::vec3 m_Front;
     glm::mat4 m_Projection;
@@ -44,9 +54,9 @@ private:
     float m_MouseSensitivity;
     float m_FieldOfView;
 
-private:
-    void UpdateCameraVectors();
-    void ProcessMouseMovement(float xoffset, float yoffset, const bool& constrainPitch = true);
+protected:
+    virtual void UpdateCameraVectors() = 0;
+    virtual void ProcessMouseMovement(float xoffset, float yoffset, const bool& constrainPitch = true) = 0;
 };
 
 #endif

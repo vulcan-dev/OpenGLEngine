@@ -6,37 +6,37 @@
 #include <string_view>
 #include "../../Core/Utilities/Logger.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_STATIC
-#include "../../ThirdParty/stb_image.h"
+// #define STB_IMAGE_IMPLEMENTATION
+// #define STB_IMAGE_STATIC
+// #include "../../ThirdParty/stb_image.h"
 
 class CTexture {
 public:
     CTexture(std::string filename, GLenum type) {
-        filename = fmt::format("..{}/{}", ROOT_DIR, filename.c_str());
-        this->m_Type = type;
+        // filename = fmt::format("..{}/{}", ROOT_DIR, filename.c_str());
+        // this->m_Type = type;
 
-        int component;
-        unsigned char* image = stbi_load(filename.c_str(), &this->m_Width, &this->m_Height, &component, 4);
+        // int component;
+        // unsigned char* image = stbi_load(filename.c_str(), &this->m_Width, &this->m_Height, &component, 4);
 
-        glGenTextures(1, &this->m_ID);
-        glBindTexture(type, this->m_ID);
+        // glGenTextures(1, &this->m_ID);
+        // glBindTexture(type, this->m_ID);
 
-        glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        // glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        // glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        // glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        // glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-        if (image) {
-            glTexImage2D(type, 0, GL_RGBA, this->m_Width, this->m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-            glGenerateMipmap(type);
-        } else {
-            CORE_ERROR("Failed loading texture: {}", filename.c_str());
-        }
+        // if (image) {
+        //     glTexImage2D(type, 0, GL_RGBA, this->m_Width, this->m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+        //     glGenerateMipmap(type);
+        // } else {
+        //     CORE_ERROR("Failed loading texture: {}", filename.c_str());
+        // }
 
-        glActiveTexture(0);
-        glBindTexture(type, 0);
-        stbi_image_free(image);
+        // glActiveTexture(0);
+        // glBindTexture(type, 0);
+        // stbi_image_free(image);
     }
 
     inline GLuint GetID() const { return this->m_ID; }

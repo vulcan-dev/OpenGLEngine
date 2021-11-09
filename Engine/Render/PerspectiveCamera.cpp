@@ -1,8 +1,8 @@
-#include "Camera.h"
+#include "PerspectiveCamera.h"
 
 #include "../Core/Utilities/Logger.h"
 
-CCamera::CCamera(const float& width, const float& height, const glm::vec3& position, const glm::vec3& up, const float& yaw, const float& pitch) {
+CPerspectiveCamera::CPerspectiveCamera(const float& width, const float& height, const glm::vec3& position, const glm::vec3& up, const float& yaw, const float& pitch) {
     this->m_Front = glm::vec3(0.0f, 0.0f, -1.0f);
     this->m_MovementSpeed = 2.5f;
     this->m_MouseSensitivity = .1f;
@@ -17,19 +17,19 @@ CCamera::CCamera(const float& width, const float& height, const glm::vec3& posit
     this->UpdateCameraVectors();
 }
 
-void CCamera::UpdateUniforms(CShader* shader) {
+void CPerspectiveCamera::UpdateUniforms(CShader* shader) {
     auto vm = this->GetProjection() * this->GetView() * glm::mat4(1.f);
 
     shader->SetMat4fv(vm, "VP");
     shader->SetVec3f(this->m_Position, "cameraPos");
 }
 
-void CCamera::Update(float xoffset, float yoffset, bool constrainPitch) {
+void CPerspectiveCamera::Update(float xoffset, float yoffset, bool constrainPitch) {
     this->ProcessMouseMovement(xoffset, yoffset, constrainPitch);
     this->UpdateCameraVectors();
 }
 
-void CCamera::ProcessMouseMovement(float xoffset, float yoffset, const bool& constrainPitch) {
+void CPerspectiveCamera::ProcessMouseMovement(float xoffset, float yoffset, const bool& constrainPitch) {
     xoffset *= this->m_MouseSensitivity;
     yoffset *= this->m_MouseSensitivity;
 
@@ -42,7 +42,7 @@ void CCamera::ProcessMouseMovement(float xoffset, float yoffset, const bool& con
     }
 }
 
-void CCamera::UpdateCameraVectors() {
+void CPerspectiveCamera::UpdateCameraVectors() {
     this->m_Front.x = cos(glm::radians(this->m_Yaw)) * cos(glm::radians(this->m_Pitch));
     this->m_Front.y = sin(glm::radians(this->m_Pitch));
     this->m_Front.z = sin(glm::radians(this->m_Yaw)) * cos(glm::radians(this->m_Pitch));

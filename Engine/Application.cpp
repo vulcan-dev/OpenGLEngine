@@ -1,21 +1,23 @@
-#include "Engine.h"
+#include "Application.h"
 
 #include <glm/gtx/string_cast.hpp>
 #include <string>
 #include <vector>
 
-void CEngine::error_callback(int error, const char* description) {
+CApplication* CApplication::m_Instance = nullptr;
+
+void CApplication::error_callback(int error, const char* description) {
     CORE_ERROR("GLFW Error: {} - {}", error, description);
 }
 
-void CEngine::window_size_callback(GLFWwindow* window, int width, int height) {
+void CApplication::window_size_callback(GLFWwindow* window, int width, int height) {
     // Globals::Projection = glm::perspective(glm::radians(90.0f), (float)width / (float)height, 0.1f, 100.0f);
     // TODO: Set ^ for game camera
     glViewport(0, 0, width, height);
     CORE_INFO("Window Resize: New Size = {} x {}", width, height);
 }
 
-CEngine::CEngine(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle) :
+CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle) :
         m_WindowWidth(windowWidth), m_WindowHeight(windowHeight), m_WindowTitle(windowTitle) {
     glfwSetErrorCallback(this->error_callback);
 
@@ -25,13 +27,34 @@ CEngine::CEngine(const uint32_t& windowWidth, const uint32_t& windowHeight, std:
     }
 
     this->CreateWindow();
+    this->InitializeOpenGL();
 
+    this->AddShader("Core", "Shaders/VertexCore.vs", "Shaders/FragmentCore.fs", "");
+    this->AddMaterial("Default", glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), 0, 1);
+
+    CApplication::m_Instance = this;
+    for (CLayer* Layer : m_LayerStack) {
+        Layer->OnAttach();
+    }
+
+    // while (this->IsRunning()) {
+        // this->Update();
+        // this->Render();
+    // }
+}
+
+void CApplication::PushLayer(CLayer* layer) {
+    this->m_LayerStack.PushLayer(layer);
+    layer->OnAttach();
+}
+
+void CApplication::InitializeOpenGL() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
 
-    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     glfwSetFramebufferSizeCallback(this->m_Window, this->window_size_callback);
 
@@ -48,7 +71,7 @@ CEngine::CEngine(const uint32_t& windowWidth, const uint32_t& windowHeight, std:
     CORE_INFO("{} Extensions Supported", extensionCount);
 }
 
-void CEngine::CreateWindow() {
+void CApplication::CreateWindow() {
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
@@ -64,16 +87,29 @@ void CEngine::CreateWindow() {
     glewInit();
 }
 
-void CEngine::Update() {
-    this->UpdateTime();
-    this->UpdateInput();
+void CApplication::Run() {
+    while (this->IsRunning()) {
+        this->UpdateTime();
+        this->UpdateInput();
+
+        glClearColor(0.f, 0.f, 0.f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        for (CLayer* Layer : m_LayerStack) {
+            Layer->OnUpdate(this->m_DeltaTime);
+            Layer->OnRender();
+        }
+
+        glfwSwapBuffers(this->m_Window);
+        glfwPollEvents();
+    }
 }
 
-void CEngine::UpdateInput() {
+void CApplication::UpdateInput() {
     glfwGetCursorPos(this->m_Window, &this->m_MousePositionX, &this->m_MousePositionY);
 }
 
-void CEngine::UpdateTime() {
+void CApplication::UpdateTime() {
     this->m_CurrentTime = static_cast<float>(glfwGetTime());
     this->m_DeltaTime = this->m_CurrentTime - this->m_LastTime;
     this->m_LastTime = this->m_CurrentTime;
@@ -81,10 +117,12 @@ void CEngine::UpdateTime() {
     this->m_Framerate = static_cast<int16_t>(1.f/this->m_DeltaTime);
 }
 
-void CEngine::Render() {
-
+void CApplication::Render() {
+    for (CLayer* Layer : m_LayerStack) {
+        Layer->OnRender();
+    }
 }
 
-CEngine::~CEngine() {
+CApplication::~CApplication() {
     glfwTerminate();
 }

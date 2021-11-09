@@ -6,7 +6,7 @@
 #include "../Shader.h"
 #include "Primitive/Primitive.h"
 #include <glm/glm.hpp>
-#include "../Camera.h"
+#include "../PerspectiveCamera.h"
 
 class CMesh {
 public:

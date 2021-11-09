@@ -141,6 +141,8 @@ CShader::CShader(std::string_view vertexFile, std::string_view fragmentFile, std
     fragmentShader = this->LoadFromFile(GL_FRAGMENT_SHADER, fragmentFile.data());
     if (geometryFile.data() != "") geometryShader = this->LoadFromFile(GL_GEOMETRY_SHADER, geometryFile.data());
 
+    CORE_INFO("Loaded Shaders: {} {} {}", vertexFile, fragmentFile, geometryFile);
+
     this->LinkProgram(vertexShader, fragmentShader, geometryShader);
 
     glDeleteShader(vertexShader);
@@ -166,8 +168,6 @@ void CShader::LinkProgram(GLuint vertexShader, GLuint fragmentShader, GLuint geo
         glGetProgramInfoLog(this->m_ProgramID, 512, NULL, infoLog);
         CORE_ERROR("Failed linking program: {}", infoLog);
     }
-
-    CORE_DEBUG("Linked {} and {}", vertexShader, fragmentShader);
 
     glUseProgram(0);
 }
