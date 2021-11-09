@@ -7,6 +7,7 @@
 #include "../../Core/Utilities/Logger.h"
 
 #define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_STATIC
 #include "../../ThirdParty/stb_image.h"
 
 class CTexture {

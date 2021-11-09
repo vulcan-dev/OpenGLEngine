@@ -87,15 +87,15 @@ void CApplication::InitializeObjects() {
         )
     );
 
-    // this->m_Models.push_back(
-    //     new CModel(
-    //         glm::vec3(0.f),
-    //         this->m_Material.get(),
-    //         this->m_Textures["BOX_DIFFUSE"].get(),
-    //         this->m_Textures["BOX_SPECULAR"].get(),
-    //         m_Meshes
-    //     )
-    // );
+    this->m_Models.push_back(
+        new CModel(
+            glm::vec3(0.f),
+            this->m_Material.get(),
+            this->m_Textures["BOX_DIFFUSE"].get(),
+            this->m_Textures["BOX_SPECULAR"].get(),
+            m_Meshes
+        )
+    );
 }
 
 void CApplication::Update() {
@@ -175,7 +175,7 @@ void CApplication::Render() {
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    for (const auto& obj : this->m_Meshes) {
+    for (const auto& obj : this->m_Models) {
         obj->Render(this->m_Shaders["Core"].get());
     }
 

@@ -19,6 +19,6 @@ uniform Material material;
 uniform vec3 cameraPos;
 
 void main() {
-	fs_color = vec3(texture(material.diffuseTex, vs_texcoord));
-	fs_color = vs_color;
+	// fs_color = vec3(texture(material.diffuseTex, vs_texcoord));
+	fs_color = vec3(texture(material.diffuseTex, vs_texcoord) * vec4(vs_color, 1.f));
 }

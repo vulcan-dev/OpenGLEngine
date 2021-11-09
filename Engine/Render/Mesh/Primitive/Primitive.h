@@ -9,6 +9,8 @@ class CPrimitive {
 public:
     CPrimitive() {}
 
+    // TODO: Add another set function for the vector on its own
+
     void Set(const Vertex* vertices, const unsigned totalVertices, const GLuint* indices, const unsigned totalIndices);
 
 	inline Vertex* GetVertices() { return this->m_Vertices.data(); }

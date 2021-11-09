@@ -15,58 +15,58 @@ public:
         // TODO: Implement Equirectangular Skybox
         Vertex vertices[] = {
             // side 1
-            glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f,-1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f,-1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
 
-            glm::vec3(1.0f, 1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f, 1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(-1.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f, 1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f, 1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(-1.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
 
             // side 2
-            glm::vec3(1.0f,-1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(1.0f,-1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f,-1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f,-1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
 
-            glm::vec3(1.0f, 1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(1.0f,-1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(-1.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f, 1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f,-1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(-1.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
 
             // side 3
-            glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f, 1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f, 1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
 
-            glm::vec3(1.0f,-1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f,-1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(-1.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f,-1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f,-1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(-1.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
 
             // side 4
-            glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f,-1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(1.0f,-1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f,-1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f,-1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
 
-            glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(1.0f,-1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(1.0f, 1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(-1.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f,-1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f, 1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(-1.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
 
             // side 5
-            glm::vec3(1.0f,-1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(1.0f,-1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f,-1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f,-1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
 
-            glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(1.0f, 1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f, 1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(-1.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f, 1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f, 1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(-1.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
 
             // side 6
-            glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f, 1.0f,-1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f, 1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(1.f, 1.f),		glm::vec3(0.f, 0.f, 1.f),
 
-            glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(0.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
-            glm::vec3(1.0f,-1.0f, 1.0f), glm::vec3(1.f, 1.f, 1.f),		glm::vec2(-1.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
+            glm::vec3(1.0f,-1.0f, 1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(-1.f, -1.f),		glm::vec3(0.f, 0.f, 1.f),
         };
 
         GLuint indices[] = {
