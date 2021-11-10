@@ -2,13 +2,14 @@
 #define ENGINE_H
 
 #include "LayerStack.h"
+#include "Core/Window.h"
 
 class CApplication {
 public:
     CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle);
 
     void Render();
-    void OnAttach();
+    void OnAttach(CWindow* window);
     void OnDetatch();
 
     void Run();
@@ -18,19 +19,10 @@ public:
 protected:
     void PushLayer(CLayer* layer);
 
-    inline bool IsRunning() { return !glfwWindowShouldClose(this->m_Window); }
+    inline bool IsRunning() { return !glfwWindowShouldClose(this->m_Window->window); }
 
-    inline GLFWwindow* GetWindow() { return this->m_Window; }
+    inline GLFWwindow* GetWindow() { return this->m_Window->window; }
     inline const float& GetDeltaTime() const { return this->m_DeltaTime; }
-
-    void AddShader(std::string_view name, std::string_view vertex, std::string_view fragment, std::string_view geometry) { this->m_Shaders[name.data()] = std::make_shared<CShader>(vertex.data(), fragment.data(), geometry.data()); }
-    inline CShader* GetShader(std::string_view name) { return this->m_Shaders[name.data()].get(); }
-
-    void AddTexture(std::string_view name, std::string_view filename, GLenum type) { this->m_Textures[name.data()] = std::make_shared<CTexture>(filename.data(), type); }
-    inline CTexture* GetTexture(std::string_view name) { return this->m_Textures[name.data()].get(); }
-
-    void AddMaterial(std::string_view name, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, GLint diffuseTexture, GLint specularTexture) { this->m_Materials[name.data()] = std::make_shared<CMaterial>(ambient, diffuse, specular, diffuseTexture, specularTexture); }
-    inline CMaterial* GetMaterial(std::string_view name) { return this->m_Materials[name.data()].get(); }
 
     uint32_t m_WindowWidth, m_WindowHeight;
 
@@ -51,7 +43,7 @@ private:
     CLayerStack m_LayerStack;
     static CApplication* m_Instance;
 
-    GLFWwindow* m_Window;
+    // GLFWwindow* m_Window;
 
     float m_DeltaTime;
     float m_CurrentTime;
@@ -59,13 +51,7 @@ private:
     uint16_t m_Framerate;
 
     GLint m_OpenGLMajor, m_OpenGLMinor;
-
-private:
-    std::map<std::string, Ref<CShader>> m_Shaders;
-    std::map<std::string, Ref<CTexture>> m_Textures;
-    std::map<std::string, Ref<CMaterial>> m_Materials;
-
-    Ref<CInput> m_KeyboardControls;
+    CWindow* m_Window;
 };
 
 #endif

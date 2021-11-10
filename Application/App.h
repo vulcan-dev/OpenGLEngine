@@ -6,7 +6,7 @@ static CApplication* CreateApplication();
 
 class CApp : public CApplication {
 public:
-    CApp() : CApplication(800, 600, "Title") {
+    CApp() : CApplication(1280, 960, "Title") {
         PushLayer(new CGameLayer());
     }
 

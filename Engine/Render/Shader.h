@@ -25,8 +25,10 @@ public:
     void Unbind();
 
     void Set1i(GLint value, const GLchar* name);
+    void Set1f(GLfloat value, const GLchar* name);
 
     void SetVec3f(glm::vec3 value, const GLchar* name);
+    void SetVec3f(glm::vec3 value, const std::string& name);
     void SetVec4f(glm::vec4 value, const GLchar* name);
 
     void SetMat3fv(glm::mat3 value, const GLchar* name, GLboolean transpose = GL_FALSE);

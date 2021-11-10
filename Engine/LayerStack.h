@@ -14,7 +14,7 @@ public:
 
     void PushLayer(CLayer* layer) {
         m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
-		m_LayerInsertIndex++;
+		    m_LayerInsertIndex++;
     }
 
     void PopLayer(CLayer* layer) {

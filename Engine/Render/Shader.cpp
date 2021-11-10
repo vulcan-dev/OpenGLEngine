@@ -186,9 +186,21 @@ void CShader::Set1i(GLint value, const GLchar* name) {
     this->Unbind();
 }
 
+void CShader::Set1f(GLfloat value, const GLchar* name) {
+    this->Bind();
+    glUniform1f(glGetUniformLocation(this->m_ProgramID, name), value);
+    this->Unbind();
+}
+
 void CShader::SetVec3f(glm::vec3 value, const GLchar* name) {
     this->Bind();
     glUniform3fv(glGetUniformLocation(this->m_ProgramID, name), 1, glm::value_ptr(value));
+    this->Unbind();
+}
+
+void CShader::SetVec3f(glm::vec3 value, const std::string& name) {
+    this->Bind();
+    glUniform3fv(glGetUniformLocation(this->m_ProgramID, name.c_str()), 1, glm::value_ptr(value));
     this->Unbind();
 }
 

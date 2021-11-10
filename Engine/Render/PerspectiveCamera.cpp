@@ -8,7 +8,7 @@ CPerspectiveCamera::CPerspectiveCamera(const float& width, const float& height, 
     this->m_MouseSensitivity = .1f;
     this->m_FieldOfView = 60;
 
-    this->m_Projection = glm::perspective(glm::radians(this->m_FieldOfView), width / height, 0.1f, 1000.0f);
+    this->m_Projection = glm::perspective(glm::radians(this->m_FieldOfView), width / height, 0.1f, 100.0f);
     this->m_Position = position;
     this->m_WorldUp = up;
     this->m_Yaw = yaw;

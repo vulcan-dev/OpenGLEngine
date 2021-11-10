@@ -17,8 +17,9 @@ void CApplication::window_size_callback(GLFWwindow* window, int width, int heigh
     CORE_INFO("Window Resize: New Size = {} x {}", width, height);
 }
 
-CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle) :
-        m_WindowWidth(windowWidth), m_WindowHeight(windowHeight), m_WindowTitle(windowTitle) {
+CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle) {
+    this->m_Window = new CWindow(windowWidth, windowHeight, windowTitle);
+
     glfwSetErrorCallback(this->error_callback);
 
     if (!glfwInit()) {
@@ -29,12 +30,9 @@ CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHe
     this->CreateWindow();
     this->InitializeOpenGL();
 
-    this->AddShader("Core", "Shaders/VertexCore.vs", "Shaders/FragmentCore.fs", "");
-    this->AddMaterial("Default", glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), 0, 1);
-
     CApplication::m_Instance = this;
     for (CLayer* Layer : m_LayerStack) {
-        Layer->OnAttach();
+        Layer->OnAttach(this->m_Window);
     }
 
     // while (this->IsRunning()) {
@@ -45,7 +43,7 @@ CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHe
 
 void CApplication::PushLayer(CLayer* layer) {
     this->m_LayerStack.PushLayer(layer);
-    layer->OnAttach();
+    layer->OnAttach(this->m_Window);
 }
 
 void CApplication::InitializeOpenGL() {
@@ -53,10 +51,10 @@ void CApplication::InitializeOpenGL() {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-    glfwSetFramebufferSizeCallback(this->m_Window, this->window_size_callback);
+    glfwSetFramebufferSizeCallback(this->m_Window->window, this->window_size_callback);
 
     glGetIntegerv(GL_MAJOR_VERSION, &this->m_OpenGLMajor);
     glGetIntegerv(GL_MINOR_VERSION, &this->m_OpenGLMinor);
@@ -75,15 +73,15 @@ void CApplication::CreateWindow() {
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+    // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    this->m_Window = glfwCreateWindow(this->m_WindowWidth, this->m_WindowHeight, this->m_WindowTitle.data(), nullptr, nullptr);
-    CORE_INFO("Created Window: {} x {}", this->m_WindowWidth, this->m_WindowHeight);
+    this->m_Window->window = glfwCreateWindow(this->m_Window->width, this->m_Window->height, this->m_Window->title.data(), nullptr, nullptr);
+    CORE_INFO("Created Window: {} x {}", this->m_Window->width, this->m_Window->height);
 
-    glfwSetWindowSizeLimits(this->m_Window, 800, 600, GLFW_DONT_CARE, GLFW_DONT_CARE);
+    glfwSetWindowSizeLimits(this->m_Window->window, 800, 600, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
-    glfwMakeContextCurrent(this->m_Window);
+    glfwMakeContextCurrent(this->m_Window->window);
     glewInit();
 }
 
@@ -92,21 +90,21 @@ void CApplication::Run() {
         this->UpdateTime();
         this->UpdateInput();
 
-        glClearColor(0.f, 0.f, 0.f, 1.f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         for (CLayer* Layer : m_LayerStack) {
-            Layer->OnUpdate(this->m_DeltaTime);
             Layer->OnRender();
+            Layer->OnUpdate(this->m_DeltaTime);
         }
 
-        glfwSwapBuffers(this->m_Window);
+        glfwSwapBuffers(this->m_Window->window);
         glfwPollEvents();
     }
 }
 
 void CApplication::UpdateInput() {
-    glfwGetCursorPos(this->m_Window, &this->m_MousePositionX, &this->m_MousePositionY);
+    glfwGetCursorPos(this->m_Window->window, &this->m_MousePositionX, &this->m_MousePositionY);
 }
 
 void CApplication::UpdateTime() {
@@ -125,4 +123,5 @@ void CApplication::Render() {
 
 CApplication::~CApplication() {
     glfwTerminate();
+    delete this->m_Window;
 }

@@ -8,11 +8,9 @@ public:
     CPrimitiveCube() : CPrimitive() {
         // TODO: Cleanup vertices
         // TODO: Cleanup indices
-        // TODO: Fix Texture Coordinates
         // TODO: Make Default Texture for all Primitives
-        // TODO: Make Sphere Primitive
-        // TODO: Make Plane Primitive
         // TODO: Implement Equirectangular Skybox
+        
         Vertex vertices[] = {
             // side 1
             glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(1.f, 0.f, 0.f),		glm::vec2(0.f, 0.f),		glm::vec3(0.f, 0.f, 1.f),

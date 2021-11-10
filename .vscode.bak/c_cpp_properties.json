@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${default}",
+                "${workspaceFolder}/lib/spdlog/include/",
+                "${workspaceFolder}/lib/glfw/include/",
+                "${workspaceFolder}/lib/glew/include/",
+                "${workspaceFolder}/lib/glm/",
+                "${workspaceFolder}/Engine/*",
+                "${workspaceFolder}/Engine/Core/*",
+                "${workspaceFolder}/Engine/Core/Utilities/*",
+                "${workspaceFolder}/Engine/Render/*",
+                "${workspaceFolder}/Engine/Render/Mesh/*",
+                "${workspaceFolder}/Engine/Render/Mesh/Primitive/*",
+                "${workspaceFolder}/Engine/ThirdParty/*",
+                "${workspaceFolder}/Application/*"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64",
+            "configurationProvider": "ms-vscode.makefile-tools",
+            "compilerArgs": []
+        }
+    ],
+    "version": 4
+}

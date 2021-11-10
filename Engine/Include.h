@@ -8,6 +8,7 @@
 
 #include "Core/Utilities/Logger.h"
 #include "Core/Input.h"
+#include "Core/Window.h"
 
 #include "Render/PerspectiveCamera.h"
 #include "Render/Shader.h"

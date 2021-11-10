@@ -8,7 +8,7 @@ public:
         CORE_DEBUG("Layer {}", name.data());
     }
 
-    virtual void OnAttach() {}
+    virtual void OnAttach(CWindow* window) {}
     virtual void OnDetach() {}
     virtual void OnUpdate(const float& dt) {}
     virtual void OnRender() {}
