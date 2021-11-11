@@ -16,7 +16,7 @@ public:
     void UpdateUniforms(CShader* shader);
 
     inline const glm::mat4& GetProjection() { return this->m_Projection; }
-    inline glm::mat4 GetView() { this->UpdateCameraVectors(); return glm::lookAt(this->m_Position, this->m_Position + this->m_Front, this->m_Up); }
+    inline glm::mat4 GetView() { return glm::lookAt(this->m_Position, this->m_Position + this->m_Front, this->m_Up); }
 
     inline const glm::vec3& GetPosition() { return this->m_Position; }
     inline const glm::vec3& GetFront() { return this->m_Front; };

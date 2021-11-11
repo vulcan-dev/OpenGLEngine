@@ -64,8 +64,8 @@ private:
     void AddShader(std::string_view name, std::string_view vertex, std::string_view fragment, std::string_view geometry) { this->m_Shaders[name.data()] = std::make_shared<CShader>(vertex.data(), fragment.data(), geometry.data()); }
     inline CShader* GetShader(std::string_view name) { return this->m_Shaders[name.data()].get(); }
 
-    // void AddTexture(std::string_view name, std::string_view filename, GLenum type) { this->m_Textures[name.data()] = std::make_shared<CTexture>(filename.data(), type); }
-    // inline CTexture* GetTexture(std::string_view name) { return this->m_Textures[name.data()].get(); }
+    void AddTexture(std::string_view name, std::string_view filename, GLenum type) { this->m_Textures[name.data()] = std::make_shared<CTexture>(filename.data(), type); }
+    inline CTexture* GetTexture(std::string_view name) { return this->m_Textures[name.data()].get(); }
 
     void AddMaterial(std::string_view name, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, GLint diffuseTexture, GLint specularTexture) { this->m_Materials[name.data()] = std::make_shared<CMaterial>(ambient, diffuse, specular, diffuseTexture, specularTexture); }
     inline CMaterial* GetMaterial(std::string_view name) { return this->m_Materials[name.data()].get(); }
@@ -78,8 +78,12 @@ private:
     float m_FieldOfView;
 
 private:
+    unsigned int cubeVAO = 0;
+    unsigned int cubeVBO = 0;
+    void TestCube();
+
     std::map<std::string, Ref<CShader>> m_Shaders;
-    // std::map<std::string, Ref<CTexture>> m_Textures;
+    std::map<std::string, Ref<CTexture>> m_Textures;
     std::map<std::string, Ref<CMaterial>> m_Materials;
 
     std::vector<CMesh*> m_Meshes;

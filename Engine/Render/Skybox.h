@@ -27,10 +27,15 @@ private:
     void AddShader(std::string_view name, std::string_view vertex, std::string_view fragment, std::string_view geometry = "") { this->m_Shaders[name.data()] = std::make_shared<CShader>(vertex.data(), fragment.data()); }
     inline CShader* GetShader(std::string_view name) { return this->m_Shaders[name.data()].get(); }
 
+    void AddTexture(std::string_view name, std::string_view filename, GLenum type) { this->m_Textures[name.data()] = std::make_shared<CTexture>(filename.data(), type); }
+    inline CTexture* GetTexture(std::string_view name) { return this->m_Textures[name.data()].get(); }
+
 private:
     std::map<std::string, Ref<CShader>> m_Shaders;
+    std::map<std::string, Ref<CTexture>> m_Textures;
     unsigned int m_Texture;
+    glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
 
-    unsigned int m_Cubemap, m_Irradiance;
+    unsigned int m_Cubemap;
     CWindow* m_Window;
 };

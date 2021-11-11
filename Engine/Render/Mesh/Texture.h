@@ -10,7 +10,7 @@
 
 class CTexture {
 public:
-    CTexture(std::string filename, GLenum type);
+    CTexture(std::string filename, GLenum type = GL_TEXTURE_2D);
 
     inline GLuint GetID() const { return this->m_ID; }
 

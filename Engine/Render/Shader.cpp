@@ -181,45 +181,45 @@ void CShader::Unbind() {
 }
 
 void CShader::Set1i(GLint value, const GLchar* name) {
-    this->Bind();
+    // this->Bind();
     glUniform1i(glGetUniformLocation(this->m_ProgramID, name), value);
-    this->Unbind();
+    // this->Unbind();
 }
 
 void CShader::Set1f(GLfloat value, const GLchar* name) {
-    this->Bind();
+    // this->Bind();
     glUniform1f(glGetUniformLocation(this->m_ProgramID, name), value);
-    this->Unbind();
+    // this->Unbind();
 }
 
 void CShader::SetVec3f(glm::vec3 value, const GLchar* name) {
-    this->Bind();
+    // this->Bind();
     glUniform3fv(glGetUniformLocation(this->m_ProgramID, name), 1, glm::value_ptr(value));
-    this->Unbind();
+    // this->Unbind();
 }
 
 void CShader::SetVec3f(glm::vec3 value, const std::string& name) {
-    this->Bind();
+    // this->Bind();
     glUniform3fv(glGetUniformLocation(this->m_ProgramID, name.c_str()), 1, glm::value_ptr(value));
-    this->Unbind();
+    // this->Unbind();
 }
 
 void CShader::SetVec4f(glm::vec4 value, const GLchar* name) {
-    this->Bind();
+    // this->Bind();
     glUniform4fv(glGetUniformLocation(this->m_ProgramID, name), 1, glm::value_ptr(value));
-    this->Unbind();
+    // this->Unbind();
 }
 
 void CShader::SetMat3fv(glm::mat3 value, const GLchar* name, GLboolean transpose) {
-    this->Bind();
+    // this->Bind();
     glUniformMatrix3fv(glGetUniformLocation(this->m_ProgramID, name), 1, transpose, glm::value_ptr(value));
-    this->Unbind();
+    // this->Unbind();
 }
 
 void CShader::SetMat4fv(glm::mat4 value, const GLchar* name, GLboolean transpose) {
-    this->Bind();
+    // this->Bind();
     glUniformMatrix4fv(glGetUniformLocation(this->m_ProgramID, name), 1, transpose, glm::value_ptr(value));
-    this->Unbind();
+    // this->Unbind();
 }
 
 CShader::~CShader() {

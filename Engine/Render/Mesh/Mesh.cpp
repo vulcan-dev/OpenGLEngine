@@ -127,11 +127,6 @@ void CMesh::Render(CShader* shader) {
     } else {
         glDrawArrays(GL_TRIANGLES, 0, this->m_TotalVertices);
     }
-
-    glBindVertexArray(0);
-    glUseProgram(0);
-    glActiveTexture(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 CMesh::~CMesh() {

@@ -30,6 +30,8 @@ glm::vec3 lightColors[] = {
     glm::vec3(300.0f, 300.0f, 300.0f)
 };
 
+unsigned int irradianceMap;
+
 unsigned int sphereVAO = 0;
 unsigned int indexCount;
 void renderSphere()
@@ -126,6 +128,7 @@ void renderSphere()
 }
 
 
+// renderCube
 void renderCube()
 {
     // initialize (if necessary)
@@ -220,10 +223,12 @@ void CSkybox::InitializeShaders() {
     this->AddShader("IShader", "Shaders/Cubemap.vs", "Shaders/Irradiance.fs");
     this->AddShader("BGShader", "Shaders/Background.vs", "Shaders/Background.fs");
 
+    this->m_Shaders["PBR"]->Bind();
     this->m_Shaders["PBR"]->Set1i(0, "irradianceMap");
     this->m_Shaders["PBR"]->SetVec3f(glm::vec3(.5f, .0f, .0f), "albedo");
     this->m_Shaders["PBR"]->Set1f(1.f, "ao");
 
+    this->m_Shaders["BGShader"]->Bind();
     this->m_Shaders["BGShader"]->Set1i(0, "environmentMap");
 
     glGenFramebuffers(1, &captureFBO);
@@ -236,17 +241,9 @@ void CSkybox::InitializeShaders() {
 }
 
 void CSkybox::InitializeHDR() {
-    // this->m_Texture = std::make_unique<CTexture>(fmt::format("..{}/{}", ROOT_DIR, "Arches_E_PineTree_3k.hdr").c_str(), GL_TEXTURE_2D);
-    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
-
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     stbi_set_flip_vertically_on_load(true);
     int width, height, nrComponents;
-    float *data = stbi_loadf(fmt::format("..{}/{}", ROOT_DIR, "Arches_E_PineTree_3k.hdr").c_str(), &width, &height, &nrComponents, 0);
+    float *data = stbi_loadf(fmt::format("..{}/{}", ROOT_DIR, "newport_loft.hdr").c_str(), &width, &height, &nrComponents, 0);
 
     if (data) {
         glGenTextures(1, &this->m_Texture);
@@ -280,11 +277,11 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    /* Convert HDR to Cubemap */
-    glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+    // pbr: convert HDR equirectangular environment map to cubemap equivalent
+    // ----------------------------------------------------------------------
     this->m_Shaders["ETCShader"]->Bind();
     this->m_Shaders["ETCShader"]->Set1i(0, "equirectangularMap");
-    this->m_Shaders["ETCShader"]->SetMat4fv(captureProjection, "projection");
+    this->m_Shaders["ETCShader"]->SetMat4fv(camera->GetProjection(), "projection");
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, this->m_Texture);
 
@@ -295,18 +292,18 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, this->m_Cubemap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // renderCube();
+        renderCube();
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    /* Create an irradiance cubemap */
-    glGenTextures(1, &this->m_Irradiance);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Irradiance);
+    // pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
+    // --------------------------------------------------------------------------------
+    glGenTextures(1, &irradianceMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
     for (unsigned int i = 0; i < 6; ++i) {
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, GL_RGB, GL_FLOAT, nullptr);
     }
-
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -320,7 +317,7 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
     /* Solve Diffuse Cubemap */
     this->m_Shaders["IShader"]->Bind();
     this->m_Shaders["IShader"]->Set1i(0, "environmentMap");
-    this->m_Shaders["IShader"]->SetMat4fv(captureProjection, "projection");
+    this->m_Shaders["IShader"]->SetMat4fv(camera->GetProjection(), "projection");
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
 
@@ -328,7 +325,7 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     for (unsigned int i = 0; i < 6; ++i) {
         this->m_Shaders["IShader"]->SetMat4fv(captureViews[i], "view");
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, this->m_Irradiance, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         renderCube();
@@ -337,8 +334,14 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     /* Initialize Uniforms */
+    this->m_Shaders["PBR"]->Bind();
     this->m_Shaders["PBR"]->SetMat4fv(camera->GetProjection(), "projection");
+    this->m_Shaders["BGShader"]->Bind();
     this->m_Shaders["BGShader"]->SetMat4fv(camera->GetProjection(), "projection");
+
+    // int scrWidth, scrHeight;
+    // glfwGetFramebufferSize(this->m_Window->window, &scrWidth, &scrHeight);
+    // glViewport(0, 0, scrWidth, scrHeight);
 }
 
 void CSkybox::UpdateUniforms(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
@@ -346,7 +349,7 @@ void CSkybox::UpdateUniforms(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
 }
 
 void CSkybox::Render(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
-    this->UpdateUniforms(camera, cameraPos);
+    // this->UpdateUniforms(camera, cameraPos);
 
     // Bind All Shaders
     this->m_Shaders["PBR"]->Bind();
@@ -354,7 +357,7 @@ void CSkybox::Render(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
     this->m_Shaders["PBR"]->SetVec3f(cameraPos, "camPos");
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Irradiance);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
 
     glm::mat4 model = glm::mat4(1.0f);
     for (int row = 0; row < nrRows; ++row) {
@@ -390,13 +393,8 @@ void CSkybox::Render(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
     this->m_Shaders["BGShader"]->SetMat4fv(camera->GetView(), "view");
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
-
-    renderCube();
-
-    glBindVertexArray(0);
-    glUseProgram(0);
-    glActiveTexture(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    // glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+    renderCube(); // needed
 }
 
 CSkybox::~CSkybox() {
