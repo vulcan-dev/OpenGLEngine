@@ -11,7 +11,7 @@
 
 class CShader {
 public:
-    CShader(std::string_view vertexFile, std::string_view fragmentFile, std::string_view geometryFile);
+    CShader(std::string_view vertexFile, std::string_view fragmentFile, std::string_view geometryFile = "");
 
     GLuint LoadFromFile(std::string vertex_file_path, std::string fragment_file_path);
     GLuint LoadFromFile(GLenum type, std::string filename);

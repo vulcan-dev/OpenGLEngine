@@ -19,6 +19,8 @@ public:
       glBindTexture(this->m_Type, this->m_ID);
     }
 
+    GLuint GetID() { return this->m_ID; }
+
     void Unbind() {
       glActiveTexture(0);
       glBindTexture(this->m_Type, 0);

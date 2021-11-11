@@ -6,7 +6,7 @@ static CApplication* CreateApplication();
 
 class CApp : public CApplication {
 public:
-    CApp() : CApplication(1280, 960, "Title") {
+    CApp() : CApplication(1280, 960, "OpenGL Engine") {
         PushLayer(new CGameLayer());
     }
 

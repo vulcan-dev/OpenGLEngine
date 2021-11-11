@@ -12,6 +12,7 @@
 
 #include "Render/PerspectiveCamera.h"
 #include "Render/Shader.h"
+#include "Render/Skybox.h"
 
 #include "Render/Mesh/Model.h"
 #include "Render/Mesh/Mesh.h"
