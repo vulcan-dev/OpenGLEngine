@@ -12,6 +12,7 @@ public:
     CSkybox(CWindow* window, CPerspectiveCamera* camera, glm::vec3 cameraPos);
 
     void Render(CPerspectiveCamera* camera, glm::vec3 cameraPos);
+    unsigned int GetIMap() { return m_IrradianceMap; }
 
     ~CSkybox();
 
@@ -19,6 +20,8 @@ private:
     void InitializeShaders();
     void InitializeHDR();
     void InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos);
+    void RenderSkyboxCube();
+
 
     void UpdateUniforms(CPerspectiveCamera* camera, glm::vec3 cameraPos);
 	void UpdateViewMatrix(CPerspectiveCamera* camera);
@@ -34,6 +37,7 @@ private:
     std::map<std::string, Ref<CShader>> m_Shaders;
     std::map<std::string, Ref<CTexture>> m_Textures;
     unsigned int m_Texture;
+    unsigned int m_IrradianceMap;
     glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
 
     unsigned int m_Cubemap;

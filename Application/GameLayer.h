@@ -61,7 +61,7 @@ private:
     void UpdateControls(const float& dt);
 
 private:
-    void AddShader(std::string_view name, std::string_view vertex, std::string_view fragment, std::string_view geometry) { this->m_Shaders[name.data()] = std::make_shared<CShader>(vertex.data(), fragment.data(), geometry.data()); }
+    void AddShader(std::string_view name, std::string_view vertex, std::string_view fragment, std::string_view geometry = "") { this->m_Shaders[name.data()] = std::make_shared<CShader>(vertex.data(), fragment.data()); }
     inline CShader* GetShader(std::string_view name) { return this->m_Shaders[name.data()].get(); }
 
     void AddTexture(std::string_view name, std::string_view filename, GLenum type) { this->m_Textures[name.data()] = std::make_shared<CTexture>(filename.data(), type); }
@@ -78,10 +78,6 @@ private:
     float m_FieldOfView;
 
 private:
-    unsigned int cubeVAO = 0;
-    unsigned int cubeVBO = 0;
-    void TestCube();
-
     std::map<std::string, Ref<CShader>> m_Shaders;
     std::map<std::string, Ref<CTexture>> m_Textures;
     std::map<std::string, Ref<CMaterial>> m_Materials;

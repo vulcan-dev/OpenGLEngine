@@ -48,12 +48,10 @@ void CApplication::PushLayer(CLayer* layer) {
 
 void CApplication::InitializeOpenGL() {
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    // glEnable(GL_CULL_FACE);
     glEnable(GL_FRAMEBUFFER_SRGB); 
-    // glCullFace(GL_BACK);
-    // glFrontFace(GL_CCW);
-    // glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    glDepthFunc(GL_LEQUAL);
+    glFrontFace(GL_CCW);
 
     glfwSetFramebufferSizeCallback(this->m_Window->window, this->window_size_callback);
 
