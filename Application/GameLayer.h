@@ -1,41 +1,3 @@
-// #ifndef CAPPLICATION_H
-// #define CAPPLICATION_H
-
-// #include "../Engine/Engine.h"
-// #include <map>
-
-// class CApplication : public CEngine {
-// public:
-//     CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle);
-
-//     void InitializeKeybinds();
-//     void InitializeObjects();
-
-//     void Update() override;
-
-//     void UpdateCamera();
-//     void UpdateObjects();
-//     void UpdateControls();
-    
-//     void Render() override;
-
-//     ~CApplication();
-
-// private:
-//     std::map<std::string, std::unique_ptr<CTexture>> m_Textures;
-//     std::unique_ptr<CPerspectiveCamera> m_Camera;
-
-//     glm::vec3 m_Position;
-
-//     float m_CameraMoveSpeed;
-//     float m_LastX, m_LastY;
-//     float m_FieldOfView;
-
-//     std::vector<int> m_Keys;
-// };
-
-// #endif
-
 #pragma once
 
 #include "../Engine/Layer.h"
@@ -48,7 +10,7 @@ public:
     void OnDetach() override;
 
     void OnUpdate(const float& dt) override;
-    void OnRender() override;
+    void OnRender(const float& dt) override;
 
     virtual ~CGameLayer() = default;
 
@@ -70,6 +32,8 @@ private:
     void AddMaterial(std::string_view name, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, GLint diffuseTexture, GLint specularTexture) { this->m_Materials[name.data()] = std::make_shared<CMaterial>(ambient, diffuse, specular, diffuseTexture, specularTexture); }
     inline CMaterial* GetMaterial(std::string_view name) { return this->m_Materials[name.data()].get(); }
 
+    void AddPrimitive(std::string_view name);
+
 private:
     glm::vec3 m_CameraPosition;
     float m_CameraMoveSpeed;
@@ -82,8 +46,8 @@ private:
     std::map<std::string, Ref<CTexture>> m_Textures;
     std::map<std::string, Ref<CMaterial>> m_Materials;
 
-    std::vector<CMesh*> m_Meshes;
-    std::vector<CModel*> m_Models;
+    std::vector<Ref<CMesh>> m_Meshes;
+    std::map<std::string_view, Ref<CModel>> m_Models;
 
     Ref<CPerspectiveCamera> m_Camera;
     Ref<CInput> m_KeyboardControls;
@@ -91,6 +55,8 @@ private:
 
     std::vector<int> m_Keys;
 
-    CWindow* m_Window;
-    double m_MousePositionX, m_MousePositionY;
+    CWindow* m_Window = nullptr;
+    double m_MousePositionX, m_MousePositionY = 0;
+
+    uint16_t m_PrimitiveShapeID = 0;
 };

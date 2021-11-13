@@ -13,6 +13,8 @@ public:
 
     void Render(CPerspectiveCamera* camera, glm::vec3 cameraPos);
     unsigned int GetIMap() { return m_IrradianceMap; }
+    unsigned int GetPFMap() { return m_PrefilterMap; }
+    unsigned int GetBRDFLUTT() { return m_brdfLUTTexture; }
 
     ~CSkybox();
 
@@ -37,7 +39,7 @@ private:
     std::map<std::string, Ref<CShader>> m_Shaders;
     std::map<std::string, Ref<CTexture>> m_Textures;
     unsigned int m_Texture;
-    unsigned int m_IrradianceMap;
+    unsigned int m_IrradianceMap, m_PrefilterMap, m_brdfLUTTexture;
     glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
 
     unsigned int m_Cubemap;

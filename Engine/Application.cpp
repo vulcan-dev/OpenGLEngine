@@ -53,6 +53,8 @@ void CApplication::InitializeOpenGL() {
     glDepthFunc(GL_LEQUAL);
     glFrontFace(GL_CCW);
 
+    // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+
     glfwSetFramebufferSizeCallback(this->m_Window->window, this->window_size_callback);
 
     glGetIntegerv(GL_MAJOR_VERSION, &this->m_OpenGLMajor);
@@ -72,7 +74,6 @@ void CApplication::CreateWindow() {
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     this->m_Window->window = glfwCreateWindow(this->m_Window->width, this->m_Window->height, this->m_Window->title.data(), nullptr, nullptr);
@@ -93,7 +94,7 @@ void CApplication::Run() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         for (CLayer* Layer : m_LayerStack) {
-            Layer->OnRender();
+            Layer->OnRender(this->m_DeltaTime);
             Layer->OnUpdate(this->m_DeltaTime);
         }
 
@@ -116,7 +117,7 @@ void CApplication::UpdateTime() {
 
 void CApplication::Render() {
     for (CLayer* Layer : m_LayerStack) {
-        Layer->OnRender();
+        Layer->OnRender(this->m_DeltaTime);
     }
 }
 

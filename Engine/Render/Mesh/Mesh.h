@@ -10,9 +10,9 @@
 
 class CMesh {
 public:
-    CMesh(const CMesh& obj);
-    CMesh(Vertex* vertexArray, const unsigned& nrOfVertices, GLuint* indexArray, const unsigned& nrOfIndices, glm::vec3 position = glm::vec3(0.f), glm::vec3 origin = glm::vec3(0.f), glm::vec3 rotation = glm::vec3(0.f), glm::vec3 scale = glm::vec3(1.f));
-	CMesh(CPrimitive* primitive, glm::vec3 position = glm::vec3(0.f), glm::vec3 origin = glm::vec3(0.f), glm::vec3 rotation = glm::vec3(0.f), glm::vec3 scale = glm::vec3(1.f));
+    CMesh(const Ref<CMesh>& obj);
+    CMesh(Vertex* vertexArray, int type, const unsigned& nrOfVertices, GLuint* indexArray, const unsigned& nrOfIndices, glm::vec3 position = glm::vec3(0.f), glm::vec3 origin = glm::vec3(0.f), glm::vec3 rotation = glm::vec3(0.f), glm::vec3 scale = glm::vec3(1.f));
+	CMesh(CPrimitive* primitive, int type = GL_TRIANGLES, glm::vec3 position = glm::vec3(0.f), glm::vec3 origin = glm::vec3(0.f), glm::vec3 rotation = glm::vec3(0.f), glm::vec3 scale = glm::vec3(1.f));
 
     void Render(CShader* shader);
 
@@ -45,6 +45,7 @@ private:
 	glm::vec3 m_Origin;
 	glm::vec3 m_Rotation;
 	glm::vec3 m_Scale;
+	int m_Type;
 
 	glm::mat4 m_ModelMatrix, m_ViewMatrix;
 

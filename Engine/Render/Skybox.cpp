@@ -7,7 +7,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../ThirdParty/stb_image.h"
 
-glm::mat4 captureViews[] = {
+glm::mat4 captureViews[] =
+{
     glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
     glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
     glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
@@ -15,127 +16,40 @@ glm::mat4 captureViews[] = {
     glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
     glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
 };
+glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+unsigned int captureFBO, captureRBO;
 
 unsigned int cubeVAO = 0;
 unsigned int cubeVBO = 0;
 
-unsigned int captureFBO, captureRBO;
-
-// int nrRows = 7;
-// int nrColumns = 7;
-// float spacing = 2.5;
-
-// glm::vec3 lightPositions[] = {
-//     glm::vec3(-10.0f,  10.0f, 10.0f),
-//     glm::vec3( 10.0f,  10.0f, 10.0f),
-//     glm::vec3(-10.0f, -10.0f, 10.0f),
-//     glm::vec3( 10.0f, -10.0f, 10.0f),
-// };
-
-// glm::vec3 lightColors[] = {
-//     glm::vec3(300.0f, 300.0f, 300.0f),
-//     glm::vec3(300.0f, 300.0f, 300.0f),
-//     glm::vec3(300.0f, 300.0f, 300.0f),
-//     glm::vec3(300.0f, 300.0f, 300.0f)
-// };
-
-// unsigned int m_IrradianceMap;
-
-// unsigned int sphereVAO = 0;
-// unsigned int indexCount;
-// void renderSphere()
-// {
-//     if (sphereVAO == 0)
-//     {
-//         glGenVertexArrays(1, &sphereVAO);
-
-//         unsigned int vbo, ebo;
-//         glGenBuffers(1, &vbo);
-//         glGenBuffers(1, &ebo);
-
-//         std::vector<glm::vec3> positions;
-//         std::vector<glm::vec2> uv;
-//         std::vector<glm::vec3> normals;
-//         std::vector<unsigned int> indices;
-
-//         const unsigned int X_SEGMENTS = 64;
-//         const unsigned int Y_SEGMENTS = 64;
-//         const float PI = 3.14159265359;
-//         for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
-//         {
-//             for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
-//             {
-//                 float xSegment = (float)x / (float)X_SEGMENTS;
-//                 float ySegment = (float)y / (float)Y_SEGMENTS;
-//                 float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-//                 float yPos = std::cos(ySegment * PI);
-//                 float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-
-//                 positions.push_back(glm::vec3(xPos, yPos, zPos));
-//                 uv.push_back(glm::vec2(xSegment, ySegment));
-//                 normals.push_back(glm::vec3(xPos, yPos, zPos));
-//             }
-//         }
-
-//         bool oddRow = false;
-//         for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
-//         {
-//             if (!oddRow) // even rows: y == 0, y == 2; and so on
-//             {
-//                 for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
-//                 {
-//                     indices.push_back(y * (X_SEGMENTS + 1) + x);
-//                     indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-//                 }
-//             }
-//             else
-//             {
-//                 for (int x = X_SEGMENTS; x >= 0; --x)
-//                 {
-//                     indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-//                     indices.push_back(y * (X_SEGMENTS + 1) + x);
-//                 }
-//             }
-//             oddRow = !oddRow;
-//         }
-//         indexCount = indices.size();
-
-//         std::vector<float> data;
-//         for (unsigned int i = 0; i < positions.size(); ++i)
-//         {
-//             data.push_back(positions[i].x);
-//             data.push_back(positions[i].y);
-//             data.push_back(positions[i].z);
-//             if (normals.size() > 0)
-//             {
-//                 data.push_back(normals[i].x);
-//                 data.push_back(normals[i].y);
-//                 data.push_back(normals[i].z);
-//             }
-//             if (uv.size() > 0)
-//             {
-//                 data.push_back(uv[i].x);
-//                 data.push_back(uv[i].y);
-//             }
-//         }
-//         glBindVertexArray(sphereVAO);
-//         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-//         glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
-//         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-//         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-//         unsigned int stride = (3 + 2 + 3) * sizeof(float);
-//         glEnableVertexAttribArray(0);
-//         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-//         glEnableVertexAttribArray(1);
-//         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
-//         glEnableVertexAttribArray(2);
-//         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
-//     }
-
-//     glBindVertexArray(sphereVAO);
-//     glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
-// }
-
+unsigned int quadVAO = 0;
+unsigned int quadVBO;
+void renderQuad()
+{
+    if (quadVAO == 0)
+    {
+        float quadVertices[] = {
+            // positions        // texture Coords
+            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+             1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+             1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        };
+        // setup plane VAO
+        glGenVertexArrays(1, &quadVAO);
+        glGenBuffers(1, &quadVBO);
+        glBindVertexArray(quadVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    }
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
+}
 
 void CSkybox::RenderSkyboxCube() {
     if (cubeVAO == 0) {
@@ -215,19 +129,12 @@ CSkybox::CSkybox(CWindow* window, CPerspectiveCamera* camera, glm::vec3 cameraPo
 }
 
 void CSkybox::InitializeShaders() {
-    // this->AddShader("PBR", "Shaders/PBR.vs", "Shaders/PBR.fs");
     this->AddShader("ETCShader", "Shaders/Cubemap.vs", "Shaders/ETC.fs");
     this->AddShader("IShader", "Shaders/Cubemap.vs", "Shaders/Irradiance.fs");
     this->AddShader("BGShader", "Shaders/Background.vs", "Shaders/Background.fs");
 
-    // TODO: Finish https://learnopengl.com/PBR/IBL/Specular-IBL
     this->AddShader("PFShader", "Shaders/Cubemap.vs", "Shaders/Prefilter.fs");
     this->AddShader("BRDFShader", "Shaders/BRDF.vs", "Shaders/BRDF.fs");
-
-    // this->m_Shaders["PBR"]->Bind();
-    // this->m_Shaders["PBR"]->Set1i(0, "m_IrradianceMap");
-    // this->m_Shaders["PBR"]->SetVec3f(glm::vec3(.5f, .0f, .0f), "albedo");
-    // this->m_Shaders["PBR"]->Set1f(1.f, "ao");
 
     this->m_Shaders["BGShader"]->Bind();
     this->m_Shaders["BGShader"]->Set1i(0, "environmentMap");
@@ -244,7 +151,7 @@ void CSkybox::InitializeShaders() {
 void CSkybox::InitializeHDR() {
     stbi_set_flip_vertically_on_load(true);
     int width, height, nrComponents;
-    float *data = stbi_loadf(fmt::format("..{}/{}", ROOT_DIR, "Skyboxes/adams_place_bridge_4k.hdr").c_str(), &width, &height, &nrComponents, 0);
+    float *data = stbi_loadf(fmt::format("..{}/{}", ROOT_DIR, "Skyboxes/PaperMill_E_3k.hdr").c_str(), &width, &height, &nrComponents, 0);
 
     if (data) {
         glGenTextures(1, &this->m_Texture);
@@ -273,14 +180,14 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // pbr: convert HDR equirectangular environment map to cubemap equivalent
     // ----------------------------------------------------------------------
     this->m_Shaders["ETCShader"]->Bind();
     this->m_Shaders["ETCShader"]->Set1i(0, "equirectangularMap");
-    this->m_Shaders["ETCShader"]->SetMat4fv(camera->GetProjection(), "projection");
+    this->m_Shaders["ETCShader"]->SetMat4fv(captureProjection, "projection");
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, this->m_Texture);
 
@@ -295,6 +202,10 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // then let OpenGL generate mipmaps from first mip face (combatting visible dots artifact)
+    glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
     // pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
     // --------------------------------------------------------------------------------
@@ -316,7 +227,7 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
     /* Solve Diffuse Cubemap */
     this->m_Shaders["IShader"]->Bind();
     this->m_Shaders["IShader"]->Set1i(0, "environmentMap");
-    this->m_Shaders["IShader"]->SetMat4fv(camera->GetProjection(), "projection");
+    this->m_Shaders["IShader"]->SetMat4fv(captureProjection, "projection");
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
 
@@ -332,15 +243,83 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    /* Initialize Uniforms */
-    // this->m_Shaders["PBR"]->Bind();
-    // this->m_Shaders["PBR"]->SetMat4fv(camera->GetProjection(), "projection");
-    this->m_Shaders["BGShader"]->Bind();
-    this->m_Shaders["BGShader"]->SetMat4fv(camera->GetProjection(), "projection");
+    // pbr: create a pre-filter cubemap, and re-scale capture FBO to pre-filter scale.
+    // --------------------------------------------------------------------------------
+    glGenTextures(1, &this->m_PrefilterMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_PrefilterMap);
+    for (unsigned int i = 0; i < 6; ++i)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, nullptr);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); // be sure to set minification filter to mip_linear 
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // generate mipmaps for the cubemap so OpenGL automatically allocates the required memory.
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
-    // int scrWidth, scrHeight;
-    // glfwGetFramebufferSize(this->m_Window->window, &scrWidth, &scrHeight);
-    // glViewport(0, 0, scrWidth, scrHeight);
+    // pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (cube)map.
+    // ----------------------------------------------------------------------------------------------------
+    this->m_Shaders["PFShader"]->Bind();
+    this->m_Shaders["PFShader"]->Set1f(0, "environmentMap");
+    this->m_Shaders["PFShader"]->SetMat4fv(captureProjection, "captureProjection");
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    unsigned int maxMipLevels = 5;
+    for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
+    {
+        // reisze framebuffer according to mip-level size.
+        unsigned int mipWidth  = 128 * std::pow(0.5, mip);
+        unsigned int mipHeight = 128 * std::pow(0.5, mip);
+        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+        glViewport(0, 0, mipWidth, mipHeight);
+
+        float roughness = (float)mip / (float)(maxMipLevels - 1);
+        this->m_Shaders["PFShader"]->Set1f(roughness, "roughness");
+        for (unsigned int i = 0; i < 6; ++i)
+        {
+            this->m_Shaders["PFShader"]->SetMat4fv(captureViews[i], "view");
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, this->m_PrefilterMap, mip);
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            this->RenderSkyboxCube();
+        }
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // pbr: generate a 2D LUT from the BRDF equations used.
+    // ----------------------------------------------------
+    glGenTextures(1, &this->m_brdfLUTTexture);
+
+    // pre-allocate enough memory for the LUT texture.
+    glBindTexture(GL_TEXTURE_2D, this->m_brdfLUTTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
+    // be sure to set wrapping mode to GL_CLAMP_TO_EDGE
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->m_brdfLUTTexture, 0);
+
+    glViewport(0, 0, 512, 512);
+    this->m_Shaders["BRDFShader"]->Bind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    renderQuad();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    /* Initialize Uniforms */
+    this->m_Shaders["BGShader"]->Bind();
+    this->m_Shaders["BGShader"]->SetMat4fv(captureProjection, "projection");
 }
 
 void CSkybox::UpdateUniforms(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
@@ -348,28 +327,22 @@ void CSkybox::UpdateUniforms(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
 }
 
 void CSkybox::Render(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
-    // this->UpdateUniforms(camera, cameraPos);
-
-    // Bind All Shaders
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, this->GetIMap());
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, this->GetPFMap());
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, this->GetBRDFLUTT());
 
     this->m_Shaders["BGShader"]->Bind();
     this->m_Shaders["BGShader"]->SetMat4fv(camera->GetView(), "view");
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
-    // glBindTexture(GL_TEXTURE_CUBE_MAP, m_IrradianceMap);
     glDisable(GL_CULL_FACE);
     this->RenderSkyboxCube();
     glEnable(GL_CULL_FACE);
 }
 
 CSkybox::~CSkybox() {
-    // glDeleteVertexArrays(1, &this->m_VAO);
-    // glDeleteBuffers(1, &this->m_VBO);
 
-    // if (this->m_TotalIndices > 0) {
-    //     glDeleteBuffers(1, &this->m_EBO);
-    // }
-
-    // delete[] this->m_VertexArray;
-    // delete[] this->m_IndexArray;
 }

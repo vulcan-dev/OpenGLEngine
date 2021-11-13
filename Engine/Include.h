@@ -18,6 +18,7 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/Vertex.h"
 #include "Render/Mesh/Primitive/Cube.h"
+#include "Render/Mesh/Primitive/Sphere.h"
 
 template<typename T>
 using Ref = std::shared_ptr<T>;

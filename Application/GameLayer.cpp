@@ -1,121 +1,48 @@
-bool firstMouse = true;
-
 #include "GameLayer.h"
 
-unsigned int sphereVAO = 0;
-unsigned int indexCount;
-int nrRows = 7;
-int nrColumns = 7;
-float spacing = 2.5;
-void renderSphere()
-{
-    if (sphereVAO == 0)
-    {
-        glGenVertexArrays(1, &sphereVAO);
-
-        unsigned int vbo, ebo;
-        glGenBuffers(1, &vbo);
-        glGenBuffers(1, &ebo);
-
-        std::vector<glm::vec3> positions;
-        std::vector<glm::vec2> uv;
-        std::vector<glm::vec3> normals;
-        std::vector<unsigned int> indices;
-
-        const unsigned int X_SEGMENTS = 64;
-        const unsigned int Y_SEGMENTS = 64;
-        const float PI = 3.14159265359;
-        for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
-        {
-            for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
-            {
-                float xSegment = (float)x / (float)X_SEGMENTS;
-                float ySegment = (float)y / (float)Y_SEGMENTS;
-                float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-                float yPos = std::cos(ySegment * PI);
-                float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-
-                positions.push_back(glm::vec3(xPos, yPos, zPos));
-                uv.push_back(glm::vec2(xSegment, ySegment));
-                normals.push_back(glm::vec3(xPos, yPos, zPos));
-            }
-        }
-
-        bool oddRow = false;
-        for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
-        {
-            if (!oddRow) // even rows: y == 0, y == 2; and so on
-            {
-                for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
-                {
-                    indices.push_back(y * (X_SEGMENTS + 1) + x);
-                    indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-                }
-            }
-            else
-            {
-                for (int x = X_SEGMENTS; x >= 0; --x)
-                {
-                    indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-                    indices.push_back(y * (X_SEGMENTS + 1) + x);
-                }
-            }
-            oddRow = !oddRow;
-        }
-        indexCount = indices.size();
-
-        std::vector<float> data;
-        for (unsigned int i = 0; i < positions.size(); ++i)
-        {
-            data.push_back(positions[i].x);
-            data.push_back(positions[i].y);
-            data.push_back(positions[i].z);
-            if (normals.size() > 0)
-            {
-                data.push_back(normals[i].x);
-                data.push_back(normals[i].y);
-                data.push_back(normals[i].z);
-            }
-            if (uv.size() > 0)
-            {
-                data.push_back(uv[i].x);
-                data.push_back(uv[i].y);
-            }
-        }
-        glBindVertexArray(sphereVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-        unsigned int stride = (3 + 2 + 3) * sizeof(float);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
-    }
-
-    glBindVertexArray(sphereVAO);
-    glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
-}
-
-glm::vec3 lightPositions[] = {
-    glm::vec3(-10.0f,  10.0f, 10.0f),
-    glm::vec3( 10.0f,  10.0f, 10.0f),
-    glm::vec3(-10.0f, -10.0f, 10.0f),
-    glm::vec3( 10.0f, -10.0f, 10.0f),
-};
-
-glm::vec3 lightColors[] = {
-    glm::vec3(300.0f, 300.0f, 300.0f),
-    glm::vec3(300.0f, 300.0f, 300.0f),
-    glm::vec3(300.0f, 300.0f, 300.0f),
-    glm::vec3(300.0f, 300.0f, 300.0f)
-};
+bool firstMouse = true;
 
 CGameLayer::CGameLayer() : CLayer("Game") {
 
+}
+
+void CGameLayer::AddPrimitive(std::string_view name) {
+    CPrimitiveCube cube;
+    CPrimitiveSphere sphere;
+
+    this->m_PrimitiveShapeID++;
+
+    if (name == "cube") {
+        this->m_Meshes.push_back(
+            std::make_shared<CMesh>(&cube, GL_TRIANGLES, glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(1.f))
+        );
+        
+        this->m_Models[fmt::format("cube_{}", this->m_PrimitiveShapeID)] = 
+            std::make_shared<CModel>(
+                glm::vec3(0.f), this->m_Materials["Default"].get(), 
+                this->m_Textures["BOX_DIFFUSE"].get(), 
+                this->m_Textures["BOX_SPECULAR"].get(), 
+                m_Meshes
+        );
+
+        APP_INFO("Added Cube, ID = {}", this->m_PrimitiveShapeID);
+    } else if (name == "sphere") {
+        this->m_Meshes.push_back(
+            std::make_shared<CMesh>(&sphere, GL_TRIANGLE_STRIP, glm::vec3(0.f, 3.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(1.f))
+        );
+
+        this->m_Models[fmt::format("sphere_{}", this->m_PrimitiveShapeID)] =
+            std::make_shared<CModel>(
+                glm::vec3(0.f), this->m_Materials["Default"].get(),
+                this->m_Textures["BOX_DIFFUSE"].get(),
+                this->m_Textures["BOX_SPECULAR"].get(),
+                m_Meshes
+        );
+
+        APP_INFO("Added Sphere, ID = {}", this->m_PrimitiveShapeID);
+    } else {
+        this->m_PrimitiveShapeID--;
+    }
 }
 
 void CGameLayer::OnAttach(CWindow* window) {
@@ -123,22 +50,22 @@ void CGameLayer::OnAttach(CWindow* window) {
 
     APP_INFO("Game Started");
 
+    this->InitializeCamera();
+    this->InitializeKeybinds();
+
     this->AddShader("Core", "Shaders/VertexCore.vs", "Shaders/FragmentCore.fs", "");
     this->AddShader("PBR", "Shaders/PBR.vs", "Shaders/PBR.fs");
 
     this->AddMaterial("Default", glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), 0, 1);
 
-    this->InitializeCamera();
-    this->InitializeKeybinds();
-
     this->m_Shaders["PBR"]->Bind();
     this->m_Shaders["PBR"]->Set1i(0, "irradianceMap");
-    this->m_Shaders["PBR"]->SetVec3f(glm::vec3(.5f, .0f, .0f), "albedo");
+    this->m_Shaders["PBR"]->Set1i(1, "prefilterMap");
+    this->m_Shaders["PBR"]->Set1i(2, "brdfLUT");
+    this->m_Shaders["PBR"]->SetVec3f(glm::vec3(.5f, .5f, .5f), "albedo");
     this->m_Shaders["PBR"]->Set1f(1.f, "ao");
 
-    this->m_Shaders["PBR"]->SetMat4fv(this->m_Camera->GetProjection(), "projection");
-
-    // this->m_Shaders["PBR"]->Unbind();
+    this->m_Shaders["PBR"]->SetMat4fv(glm::perspective(glm::radians(90.0f), (float)this->m_Window->width / (float)this->m_Window->height, 0.1f, 100.0f), "projection");
 
     this->AddTexture("BOX_DIFFUSE", "Textures/Box.png", GL_TEXTURE_2D);
     this->AddTexture("BOX_SPECULAR", "Textures/BoxSpecularMap.png", GL_TEXTURE_2D);
@@ -148,26 +75,8 @@ void CGameLayer::OnAttach(CWindow* window) {
     glfwGetFramebufferSize(this->m_Window->window, &this->m_Window->width, &this->m_Window->height);
     glViewport(0, 0, this->m_Window->width, this->m_Window->height);
 
-    CPrimitiveCube cube;
-    this->m_Meshes.push_back(
-        new CMesh(
-            &cube,
-            glm::vec3(0.f, 0.f, 0.f),
-            glm::vec3(0.f),
-            glm::vec3(0.f),
-            glm::vec3(1.f)
-        )
-    );
-
-    this->m_Models.push_back(
-        new CModel(
-            glm::vec3(0.f),
-            this->m_Materials["Default"].get(),
-            this->m_Textures["BOX_DIFFUSE"].get(),
-            this->m_Textures["BOX_SPECULAR"].get(),
-            m_Meshes
-        )
-    );
+    AddPrimitive("cube");
+    AddPrimitive("sphere");
 }
 
 void CGameLayer::OnUpdate(const float& dt) {
@@ -176,48 +85,17 @@ void CGameLayer::OnUpdate(const float& dt) {
     this->UpdateCamera(dt);
 }
 
-void CGameLayer::OnRender() {
+void CGameLayer::OnRender(const float& dt) {
     this->m_Shaders["PBR"]->Bind();
     this->m_Shaders["PBR"]->SetMat4fv(this->m_Camera->GetView(), "view");
     this->m_Shaders["PBR"]->SetVec3f(this->m_CameraPosition, "camPos");
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Skybox->GetIMap());
-
-    // glm::mat4 model = glm::mat4(1.0f);
-    // for (int row = 0; row < nrRows; ++row) {
-    //     this->m_Shaders["PBR"]->Set1f((float)row / (float)nrRows, "metallic");
-    //     for (int col = 0; col < nrColumns; ++col) {
-    //         this->m_Shaders["PBR"]->Set1f(glm::clamp((float)col / (float)nrColumns, 0.05f, 1.0f), "roughness");
-
-    //         model = glm::mat4(1.0f);
-    //         model = glm::translate(model, glm::vec3(
-    //             (float)(col - (nrColumns / 2)) * spacing,
-    //             (float)(row - (nrRows / 2)) * spacing,
-    //             -2.0f
-    //         ));
-    //         this->m_Shaders["PBR"]->SetMat4fv(model, "model"); // check 4fv and normal
-    //         renderSphere();
-    //     }
-    // }
-
-    // for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i) {
-    //     glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
-    //     newPos = lightPositions[i];
-    //     this->m_Shaders["PBR"]->SetVec3f(newPos, "lightPositions[" + std::to_string(i) + "]");
-    //     this->m_Shaders["PBR"]->SetVec3f(lightColors[i], "lightColors[" + std::to_string(i) + "]");
-
-    //     model = glm::mat4(1.0f);
-    //     model = glm::translate(model, newPos);
-    //     model = glm::scale(model, glm::vec3(0.5f));
-    //     this->m_Shaders["PBR"]->SetMat4fv(model, "model");
-    //     renderSphere();
-    // }
+    for (const auto& model : this->m_Models) {
+        model.second->Render(this->m_Shaders["PBR"].get());
+    }
 
     this->m_Skybox->Render(this->m_Camera.get(), this->m_CameraPosition);
-    for (const auto& model : this->m_Models) {
-        model->Render(this->m_Shaders["Core"].get());
-    }
+    this->m_Shaders["PBR"]->Bind();
 }
 
 void CGameLayer::OnDetach() {

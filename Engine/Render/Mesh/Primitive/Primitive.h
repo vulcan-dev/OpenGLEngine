@@ -12,6 +12,7 @@ public:
     // TODO: Add another set function for the vector on its own
 
     void Set(const Vertex* vertices, const unsigned totalVertices, const GLuint* indices, const unsigned totalIndices);
+    void Set2(std::vector<glm::vec3> positions, std::vector<glm::vec3> normals, std::vector<glm::vec2> uv, std::vector<unsigned int>);
 
 	inline Vertex* GetVertices() { return this->m_Vertices.data(); }
 	inline GLuint* GetIndices() { return this->m_Indices.data(); }

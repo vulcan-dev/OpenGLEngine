@@ -11,7 +11,7 @@ public:
     virtual void OnAttach(CWindow* window) {}
     virtual void OnDetach() {}
     virtual void OnUpdate(const float& dt) {}
-    virtual void OnRender() {}
+    virtual void OnRender(const float& dt) {}
 
     virtual ~CLayer() = default;
 
