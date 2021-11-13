@@ -128,6 +128,18 @@ CSkybox::CSkybox(CWindow* window, CPerspectiveCamera* camera, glm::vec3 cameraPo
     this->m_Window = window;
 }
 
+glm::mat4 rotationX(float angle) {
+	return glm::mat4(1.0, 0, 0, 0, 0, glm::cos(angle), -glm::sin(angle), 0, 0, glm::sin(angle), glm::cos(angle), 0, 0, 0, 0, 1);
+}
+
+glm::mat4 rotationY(float angle) {
+	return glm::mat4(glm::cos(angle), 0, glm::sin(angle), 0, 0, 1.0, 0, 0, -glm::sin(angle), 0, glm::cos(angle), 0, 0, 0, 0, 1);
+}
+
+glm::mat4 rotationZ(float angle) {
+	return glm::mat4(glm::cos(angle), -glm::sin(angle), 0, 0, glm::sin(angle), glm::cos(angle), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+}
+
 void CSkybox::InitializeShaders() {
     this->AddShader("ETCShader", "Shaders/Cubemap.vs", "Shaders/ETC.fs");
     this->AddShader("IShader", "Shaders/Cubemap.vs", "Shaders/Irradiance.fs");
@@ -144,14 +156,16 @@ void CSkybox::InitializeShaders() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 2048, 2048);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+
+    // captureProjection = glm::mat4(1.0, 0, 0, 0, 0, glm::cos(0), -glm::sin(0), 0, 0, glm::sin(0), glm::cos(0), 0, 0, 0, 0, 1);
 }
 
 void CSkybox::InitializeHDR() {
     stbi_set_flip_vertically_on_load(true);
     int width, height, nrComponents;
-    float *data = stbi_loadf(fmt::format("..{}/{}", ROOT_DIR, "Skyboxes/PaperMill_E_3k.hdr").c_str(), &width, &height, &nrComponents, 0);
+    float *data = stbi_loadf(fmt::format("..{}/{}", ROOT_DIR, "Skyboxes/HDR_Free_City_Night_Lights_Ref.hdr").c_str(), &width, &height, &nrComponents, 0);
 
     if (data) {
         glGenTextures(1, &this->m_Texture);
@@ -174,7 +188,7 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
     glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
 
     for (unsigned int i = 0; i < 6; ++i) {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 2048, 2048, 0, GL_RGB, GL_FLOAT, nullptr);
     }
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -191,10 +205,10 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, this->m_Texture);
 
-    glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
+    glViewport(0, 0, 2048, 2048); // don't forget to configure the viewport to the capture dimensions.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     for (unsigned int i = 0; i < 6; ++i) {
-        this->m_Shaders["ETCShader"]->SetMat4fv(captureViews[i], "view");
+        this->m_Shaders["ETCShader"]->SetMat4fv(captureViews[i] * rotationY(m_rot), "view");
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, this->m_Cubemap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -231,10 +245,10 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
 
-    glViewport(0, 0, 32, 32);
+    glViewport(0, 0, 128, 128);
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     for (unsigned int i = 0; i < 6; ++i) {
-        this->m_Shaders["IShader"]->SetMat4fv(captureViews[i], "view");
+        this->m_Shaders["IShader"]->SetMat4fv(captureViews[i] * rotationY(m_rot), "view");
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, m_IrradianceMap, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -282,7 +296,7 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
         this->m_Shaders["PFShader"]->Set1f(roughness, "roughness");
         for (unsigned int i = 0; i < 6; ++i)
         {
-            this->m_Shaders["PFShader"]->SetMat4fv(captureViews[i], "view");
+            this->m_Shaders["PFShader"]->SetMat4fv(captureViews[i] * rotationY(m_rot), "view");
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, this->m_PrefilterMap, mip);
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -297,7 +311,7 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
 
     // pre-allocate enough memory for the LUT texture.
     glBindTexture(GL_TEXTURE_2D, this->m_brdfLUTTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 2048, 2048, 0, GL_RG, GL_FLOAT, 0);
     // be sure to set wrapping mode to GL_CLAMP_TO_EDGE
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -307,10 +321,10 @@ void CSkybox::InitializeCubemap(CPerspectiveCamera* camera, glm::vec3 cameraPos)
     // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 2048, 2048);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->m_brdfLUTTexture, 0);
 
-    glViewport(0, 0, 512, 512);
+    glViewport(0, 0, 2048, 2048);
     this->m_Shaders["BRDFShader"]->Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderQuad();
@@ -327,20 +341,49 @@ void CSkybox::UpdateUniforms(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
 }
 
 void CSkybox::Render(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
+    // this->SetRotY(1 * glfwGetTime());
+
+    this->m_Shaders["ETCShader"]->Bind();
+    this->m_Shaders["ETCShader"]->Set1i(0, "equirectangularMap");
+    this->m_Shaders["ETCShader"]->SetMat4fv(captureProjection, "projection");
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, this->GetIMap());
+    glBindTexture(GL_TEXTURE_2D, this->m_Texture);
+
+    glViewport(0, 0, 2048, 2048);
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    for (unsigned int i = 0; i < 6; ++i) {
+        this->m_Shaders["ETCShader"]->SetMat4fv(captureViews[i] * rotationY(m_rot), "view");
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, this->m_Cubemap, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glDisable(GL_CULL_FACE);
+        this->RenderSkyboxCube();
+        glEnable(GL_CULL_FACE);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+    glViewport(0, 0, 1920, 1080); // !FIX hard coded
+
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, this->GetPFMap());
+    glBindTexture(GL_TEXTURE_CUBE_MAP, this->GetIMap());
     glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, this->GetPFMap());
+    glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, this->GetBRDFLUTT());
 
     this->m_Shaders["BGShader"]->Bind();
+    this->m_Shaders["BGShader"]->SetMat4fv(captureProjection, "projection");
     this->m_Shaders["BGShader"]->SetMat4fv(camera->GetView(), "view");
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE4);
     glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
     glDisable(GL_CULL_FACE);
     this->RenderSkyboxCube();
     glEnable(GL_CULL_FACE);
+    glActiveTexture(0);
 }
 
 CSkybox::~CSkybox() {

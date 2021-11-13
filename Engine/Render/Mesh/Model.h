@@ -34,8 +34,20 @@ public:
 		this->m_OverrideTextureSpecular = orTexSpec;
 
 		std::vector<Vertex> mesh = LoadOBJ(objFile);
+		this->m_Meshes.push_back(std::make_shared<CMesh>(
+			mesh.data(),
+			GL_TRIANGLES,
+			mesh.size(),
+			nullptr,
+			0,
+			glm::vec3(0.f, 0.f, 0.f),
+			glm::vec3(0.f),
+			glm::vec3(0.f),
+			glm::vec3(1.f)
+		));
+
 		// this->m_Meshes.push_back(
-		// 	new CMesh(
+		// 	std::make_shared<CMesh>(
 		// 		mesh,
 		// 		GL_TRIANGLES,
 		// 		mesh.size(),
@@ -48,10 +60,10 @@ public:
 		// 	)
 		// );
 
-		for (auto& i : this->m_Meshes) {
-			i->Move(this->m_Position);
-			i->SetOrigin(this->m_Position);
-		}
+		// for (auto& i : this->m_Meshes) {
+		// 	i->Move(this->m_Position);
+		// 	i->SetOrigin(this->m_Position);
+		// }
 	}
 
 	~CModel() {
@@ -69,13 +81,13 @@ public:
 
 	void Render(CShader* shader) {
 		this->UpdateUniforms();
-		this->m_Material->SendToShader(*shader);
+		// this->m_Material->SendToShader(*shader);
 
-		// shader->Bind();
+		// // shader->Bind();
 
 		for (auto& i : this->m_Meshes) {
-			this->m_OverrideTextureDiffuse->Bind(0);
-			this->m_OverrideTextureSpecular->Bind(1);
+			// this->m_OverrideTextureDiffuse->Bind(0);
+			// this->m_OverrideTextureSpecular->Bind(1);
 
 			i->Render(shader); //Activates shader also
 		}

@@ -16,6 +16,8 @@ public:
     unsigned int GetPFMap() { return m_PrefilterMap; }
     unsigned int GetBRDFLUTT() { return m_brdfLUTTexture; }
 
+    void SetRotY(float rot) { this->m_rot = rot; };
+
     ~CSkybox();
 
 private:
@@ -41,6 +43,7 @@ private:
     unsigned int m_Texture;
     unsigned int m_IrradianceMap, m_PrefilterMap, m_brdfLUTTexture;
     glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+    float m_rot = 0;
 
     unsigned int m_Cubemap;
     CWindow* m_Window;

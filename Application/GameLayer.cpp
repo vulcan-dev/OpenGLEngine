@@ -71,12 +71,22 @@ void CGameLayer::OnAttach(CWindow* window) {
     this->AddTexture("BOX_SPECULAR", "Textures/BoxSpecularMap.png", GL_TEXTURE_2D);
 
     this->m_Skybox = std::make_shared<CSkybox>(this->m_Window, this->m_Camera.get(), this->m_CameraPosition);
+    this->m_Skybox->SetRotY(90);
 
     glfwGetFramebufferSize(this->m_Window->window, &this->m_Window->width, &this->m_Window->height);
     glViewport(0, 0, this->m_Window->width, this->m_Window->height);
 
-    AddPrimitive("cube");
+    // AddPrimitive("cube");
     AddPrimitive("sphere");
+
+    // auto filepath = fmt::format("../{}/{}", ROOT_DIR, "Models/mustang.obj");
+    // this->m_Models["Obj"] = std::make_shared<CModel>(
+    //     glm::vec3(0.f),
+    //     this->m_Materials["Default"].get(),
+    //     this->m_Textures["BOX_DIFFUSE"].get(), 
+    //     this->m_Textures["BOX_SPECULAR"].get(),
+    //     filepath.data()
+    // );
 }
 
 void CGameLayer::OnUpdate(const float& dt) {
@@ -86,16 +96,15 @@ void CGameLayer::OnUpdate(const float& dt) {
 }
 
 void CGameLayer::OnRender(const float& dt) {
-    this->m_Shaders["PBR"]->Bind();
     this->m_Shaders["PBR"]->SetMat4fv(this->m_Camera->GetView(), "view");
     this->m_Shaders["PBR"]->SetVec3f(this->m_CameraPosition, "camPos");
-
-    for (const auto& model : this->m_Models) {
-        model.second->Render(this->m_Shaders["PBR"].get());
-    }
+    this->m_Shaders["PBR"]->Bind();
 
     this->m_Skybox->Render(this->m_Camera.get(), this->m_CameraPosition);
     this->m_Shaders["PBR"]->Bind();
+    for (const auto& model : this->m_Models) {
+        model.second->Render(this->m_Shaders["PBR"].get());
+    }
 }
 
 void CGameLayer::OnDetach() {
@@ -136,7 +145,10 @@ void CGameLayer::InitializeKeybinds() {
     this->m_KeyboardControls->SetupKeyInputs(*this->m_Window->window);
 }
 
-void CGameLayer::UpdateObjects(const float& dt) {}
+void CGameLayer::UpdateObjects(const float& dt) {
+    this->m_Skybox->SetRotY(90);
+}
+
 void CGameLayer::UpdateCamera(const float& dt) {
      this->m_Camera->UpdateUniforms(this->GetShader("Core"));
 

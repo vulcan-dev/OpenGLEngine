@@ -22,9 +22,12 @@
 
 //Own libs
 #include "../Render/Mesh/Vertex.h"
+#include "../Core/Utilities/Logger.h"
 
 static std::vector<Vertex> LoadOBJ(const char* file_name)
 {
+	CORE_DEBUG("OBJ FILE: {}", file_name);
+
 	//Vertex portions
 	std::vector<glm::fvec3> vertex_positions;
 	std::vector<glm::fvec2> vertex_texcoords;
@@ -139,11 +142,8 @@ static std::vector<Vertex> LoadOBJ(const char* file_name)
 		// vertices[i].color = glm::vec3(1.f, 1.f, 1.f);
 	}
 
-	//DEBUG
-	std::cout << "Nr of vertices: " << vertices.size() << "\n";
-
-	//Loaded success
-	std::cout << "OBJ file loaded!" << "\n";
+	CORE_DEBUG("Vertices: {}", vertices.size());
+	CORE_INFO("Object loaded");
 	return vertices;
 }
 
