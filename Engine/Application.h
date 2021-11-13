@@ -6,7 +6,7 @@
 
 class CApplication {
 public:
-    CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle);
+    CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle, bool borderless = false);
 
     void Render();
     void OnAttach(CWindow* window);
@@ -29,7 +29,7 @@ protected:
     double m_MousePositionX, m_MousePositionY;
 
 private:
-    void CreateWindow();
+    void CreateWindow(bool borderless);
     void InitializeOpenGL();
     void UpdateTime();
     void UpdateInput();

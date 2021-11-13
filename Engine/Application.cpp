@@ -17,7 +17,7 @@ void CApplication::window_size_callback(GLFWwindow* window, int width, int heigh
     CORE_INFO("Window Resize: New Size = {} x {}", width, height);
 }
 
-CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle) {
+CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle, bool borderless) {
     this->m_Window = new CWindow(windowWidth, windowHeight, windowTitle);
 
     glfwSetErrorCallback(this->error_callback);
@@ -27,18 +27,13 @@ CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHe
         exit(1);
     }
 
-    this->CreateWindow();
+    this->CreateWindow(borderless);
     this->InitializeOpenGL();
 
     CApplication::m_Instance = this;
     for (CLayer* Layer : m_LayerStack) {
         Layer->OnAttach(this->m_Window);
     }
-
-    // while (this->IsRunning()) {
-        // this->Update();
-        // this->Render();
-    // }
 }
 
 void CApplication::PushLayer(CLayer* layer) {
@@ -70,16 +65,23 @@ void CApplication::InitializeOpenGL() {
     CORE_INFO("{} Extensions Supported", extensionCount);
 }
 
-void CApplication::CreateWindow() {
+void CApplication::CreateWindow(bool borderless) {
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    this->m_Window->window = glfwCreateWindow(this->m_Window->width, this->m_Window->height, this->m_Window->title.data(), nullptr, nullptr);
-    CORE_INFO("Created Window: {} x {}", this->m_Window->width, this->m_Window->height);
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    
+    if (borderless) {
+        glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+        this->m_Window->window = glfwCreateWindow(mode->width, mode->height, this->m_Window->title.data(), glfwGetPrimaryMonitor(), nullptr);    
+    } else {
+        this->m_Window->window = glfwCreateWindow(this->m_Window->width, this->m_Window->height, this->m_Window->title.data(), nullptr, nullptr);
+        glfwSetWindowSizeLimits(this->m_Window->window, 800, 600, GLFW_DONT_CARE, GLFW_DONT_CARE);
+    }
 
-    glfwSetWindowSizeLimits(this->m_Window->window, 800, 600, GLFW_DONT_CARE, GLFW_DONT_CARE);
+    CORE_INFO("Created Window: {} x {}", this->m_Window->width, this->m_Window->height);
 
     glfwMakeContextCurrent(this->m_Window->window);
     glewInit();
