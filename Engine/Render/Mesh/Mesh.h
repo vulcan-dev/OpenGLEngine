@@ -28,6 +28,28 @@ public:
 		this->m_Origin = origin;
 	}
 
+	void SetRotation(const float& angle) {
+		this->m_Rotation.x += angle;
+		this->m_Rotation.y += angle;
+		this->m_Rotation.z += angle;
+	}
+
+	void SetPosition(const glm::vec3& pos) {
+		this->m_Position += pos;
+	}
+
+	void SetRotationX(const float& angle) {
+		this->m_Rotation.x += angle;
+	}
+
+	void SetRotationY(const float& angle) {
+		this->m_Rotation.y += angle;
+	}
+
+	void SetRotationZ(const float& angle) {
+		this->m_Rotation.z += angle;
+	}
+
     ~CMesh();
 
 private:

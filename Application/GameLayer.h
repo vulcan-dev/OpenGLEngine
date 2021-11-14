@@ -57,6 +57,7 @@ private:
 
     CWindow* m_Window = nullptr;
     double m_MousePositionX, m_MousePositionY = 0;
+    bool m_MouseEnabled;
 
     uint16_t m_PrimitiveShapeID = 0;
 };

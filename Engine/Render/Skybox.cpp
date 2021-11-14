@@ -341,8 +341,6 @@ void CSkybox::UpdateUniforms(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
 }
 
 void CSkybox::Render(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
-    // this->SetRotY(1 * glfwGetTime());
-
     this->m_Shaders["ETCShader"]->Bind();
     this->m_Shaders["ETCShader"]->Set1i(0, "equirectangularMap");
     this->m_Shaders["ETCShader"]->SetMat4fv(captureProjection, "projection");

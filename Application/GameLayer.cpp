@@ -39,7 +39,7 @@ void CGameLayer::AddPrimitive(std::string_view name) {
                 m_Meshes
         );
 
-        APP_INFO("Added Sphere, ID = {}", this->m_PrimitiveShapeID);
+        APP_INFO("Added Sphere, ID = {}, Name = {}", this->m_PrimitiveShapeID, fmt::format("sphere_{}", this->m_PrimitiveShapeID));
     } else {
         this->m_PrimitiveShapeID--;
     }
@@ -76,10 +76,10 @@ void CGameLayer::OnAttach(CWindow* window) {
     glfwGetFramebufferSize(this->m_Window->window, &this->m_Window->width, &this->m_Window->height);
     glViewport(0, 0, this->m_Window->width, this->m_Window->height);
 
-    // AddPrimitive("cube");
+    AddPrimitive("cube");
     AddPrimitive("sphere");
 
-    // auto filepath = fmt::format("../{}/{}", ROOT_DIR, "Models/mustang.obj");
+    // auto filepath = fmt::format("../{}/{}", ROOT_DIR, "Models/Handgun_obj.obj");
     // this->m_Models["Obj"] = std::make_shared<CModel>(
     //     glm::vec3(0.f),
     //     this->m_Materials["Default"].get(),
@@ -105,6 +105,10 @@ void CGameLayer::OnRender(const float& dt) {
     for (const auto& model : this->m_Models) {
         model.second->Render(this->m_Shaders["PBR"].get());
     }
+}
+
+void CGameLayer::UpdateObjects(const float& dt) {
+
 }
 
 void CGameLayer::OnDetach() {
@@ -145,10 +149,6 @@ void CGameLayer::InitializeKeybinds() {
     this->m_KeyboardControls->SetupKeyInputs(*this->m_Window->window);
 }
 
-void CGameLayer::UpdateObjects(const float& dt) {
-    this->m_Skybox->SetRotY(90);
-}
-
 void CGameLayer::UpdateCamera(const float& dt) {
      this->m_Camera->UpdateUniforms(this->GetShader("Core"));
 
@@ -173,9 +173,18 @@ void CGameLayer::UpdateControls(const float& dt) {
     glfwGetCursorPos(this->m_Window->window, &this->m_MousePositionX, &this->m_MousePositionY);
     float velocity = this->m_CameraMoveSpeed * dt;
     
-    if (this->m_KeyboardControls->IsKeyDown(GLFW_KEY_ESCAPE)) {
-        // glfwSetWindowShouldClose(this->GetWindow(), true);
-    }
+    // if (this->m_KeyboardControls->IsKeyDown(GLFW_KEY_ESCAPE)) {
+    //     this->m_MouseEnabled = !this->m_MouseEnabled;
+    //     APP_DEBUG("Pressed Once"); That guys input library sucks ass so gonna make my own that's not absolute dog shit
+
+    //     // if (!this->m_MouseEnabled) {
+    //     //     APP_DEBUG("Disabling Mouse");
+    //     //     glfwSetInputMode(this->m_Window->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    //     // } else {
+    //     //     APP_DEBUG("Enabling Mouse");
+    //     //     glfwSetInputMode(this->m_Window->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //     // }
+    // }
 
     // x
     if (this->m_KeyboardControls->IsKeyDown(GLFW_KEY_A)) {

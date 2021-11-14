@@ -1,6 +1,8 @@
 #include "Input.h"
 #include <algorithm>
 
+#include "Utilities/Logger.h"
+
 std::vector<CInput*> CInput::m_Instances;
 
 CInput::CInput(std::vector<int> keysToMonitor) : m_IsEnabled(true) {
@@ -27,10 +29,10 @@ bool CInput::IsKeyDown(const int& key) {
     return result;
 }
 
-void CInput::SetIsKeyDown(const int& key, const bool& isDown) {
+void CInput::SetIsKeyDown(const int& key, const bool& value) {
     std::map<int,bool>::iterator it = this->m_Keys.find(key);
     if (it != this->m_Keys.end()) {
-        this->m_Keys[key] = isDown;
+        this->m_Keys[key] = value;
     }
 }
 

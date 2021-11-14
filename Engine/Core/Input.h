@@ -10,7 +10,7 @@ public:
     inline const bool& GetIsEnabled() const { return this->m_IsEnabled; }
 
     void SetIsEnabled(const bool& value) { this->m_IsEnabled = value; }
-    void SetIsKeyDown(const int& key, const bool& isDown);
+    void SetIsKeyDown(const int& key, const bool& value);
 
     ~CInput();
 
@@ -22,4 +22,6 @@ private:
     static std::vector<CInput*> m_Instances;
     std::map<int, bool> m_Keys;
     bool m_IsEnabled;
+
+    int m_CurrentKey;
 };

@@ -21,7 +21,7 @@ public:
 		}
 
 		for (auto& i : this->m_Meshes) {
-			i->Move(this->m_Position);
+			i->SetPosition(this->m_Position);
 			i->SetOrigin(this->m_Position);
 		}
 	}
@@ -60,22 +60,13 @@ public:
 		// 	)
 		// );
 
-		// for (auto& i : this->m_Meshes) {
-		// 	i->Move(this->m_Position);
-		// 	i->SetOrigin(this->m_Position);
-		// }
+		for (auto& i : this->m_Meshes) {
+			i->Move(this->m_Position);
+			i->SetOrigin(this->m_Position);
+		}
 	}
 
 	~CModel() {
-
-	}
-
-	void Rotate(const glm::vec3 rotation) {
-		for (auto& i : this->m_Meshes)
-			i->Rotate(rotation);
-	}
-
-	void Update() {
 
 	}
 
@@ -94,7 +85,9 @@ public:
 	}
 
 private:
-    void UpdateUniforms() {}
+    void UpdateUniforms() {
+
+	}
 
 private:
     CMaterial* m_Material;
