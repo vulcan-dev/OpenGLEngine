@@ -9,7 +9,7 @@ make: *** No rule to make target '/home/vulcandev/Programming/Repos/OpenGLEngine
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sun Nov 14 03:10:43 2021
+# Make data base, printed on Mon Nov 15 12:01:29 2021
 
 # Variables
 
@@ -24,7 +24,7 @@ SSH_AGENT_LAUNCHER = gnome-keyring
 # environment
 GJS_DEBUG_OUTPUT = stderr
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-30ddfc25-0706-408f-be43-12ca50794a42.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-cc447bee-ea9d-4662-8641-411ffe9b8ebc.sock
 # environment
 MANDATORY_PATH = /usr/share/gconf/pop.mandatory.path
 # environment
@@ -94,13 +94,13 @@ MAKEFILE_LIST :=
 # environment
 VSCODE_VERBOSE_LOGGING = true
 # environment
-VSCODE_PID = 7490
+VSCODE_PID = 19033
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/pop-os:@/tmp/.ICE-unix/2065,unix/pop-os:/tmp/.ICE-unix/2065
+SESSION_MANAGER = local/pop-os:@/tmp/.ICE-unix/2053,unix/pop-os:/tmp/.ICE-unix/2053
 # automatic
 *F = $(notdir $*)
 # environment
@@ -140,7 +140,7 @@ MAKEFILES :=
 # automatic
 ^F = $(notdir $^)
 # environment
-INVOCATION_ID = a2a88ba244d04af7a90c895fc33a0604
+INVOCATION_ID = 4e30b13c488b40ba96584b5d9678d293
 # environment
 VSCODE_LOG_NATIVE = false
 # environment
@@ -176,9 +176,9 @@ DEFAULTS_PATH = /usr/share/gconf/pop.default.path
 # default
 MAKE_VERSION := 4.3
 # environment
-MANAGERPID = 1757
+MANAGERPID = 1800
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 7490
+GIO_LAUNCHED_DESKTOP_FILE_PID = 19033
 # environment
 _ = /usr/share/code/code
 # environment
@@ -186,7 +186,7 @@ XDG_RUNTIME_DIR = /run/user/1000
 # environment
 GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
-JOURNAL_STREAM = 8:30640
+JOURNAL_STREAM = 8:33948
 # environment
 XDG_SESSION_CLASS = user
 # environment
@@ -262,6 +262,6 @@ all:
 # strcache performance: lookups = 9 / hit rate = 33%
 # hash-table stats:
 # Load=6/8192=0%, Rehash=0, Collisions=0/9=0%
-# Finished Make data base on Sun Nov 14 03:10:43 2021
+# Finished Make data base on Mon Nov 15 12:01:29 2021
 
  

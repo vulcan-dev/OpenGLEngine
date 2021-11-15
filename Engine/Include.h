@@ -1,5 +1,4 @@
-#ifndef INCLUDE_H
-#define INCLUDE_H
+#pragma once
 
 #include "RootDir.h.in"
 
@@ -10,17 +9,15 @@
 #include "Core/Input.h"
 #include "Core/Window.h"
 
-#include "Render/PerspectiveCamera.h"
+#include "Render/Camera.h"
 #include "Render/Shader.h"
 #include "Render/Skybox.h"
 
-#include "Render/Mesh/Model.h"
 #include "Render/Mesh/Mesh.h"
-#include "Render/Mesh/Vertex.h"
+#include "Render/Mesh/Texture.h"
+#include "Render/Mesh/Model.h"
 #include "Render/Mesh/Primitive/Cube.h"
 #include "Render/Mesh/Primitive/Sphere.h"
 
 template<typename T>
 using Ref = std::shared_ptr<T>;
-
-#endif

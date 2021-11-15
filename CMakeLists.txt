@@ -20,9 +20,10 @@ configure_file(Engine/RootDir.h.in Engine/RootDir.h)
 
 include_directories(HEADER_FILES)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DEBUG_MODE")
+set(CMAKE_BUILD_TYPE Debug)
 
 # The main executable
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_MODE")
 add_executable(main ${SOURCE_FILES})
 
 set(LIBS glfw libglew_static glm spdlog::spdlog)

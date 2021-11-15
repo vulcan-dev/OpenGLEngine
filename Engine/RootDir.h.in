@@ -1,2 +1,8 @@
 #pragma once
-#define ROOT_DIR "/Resources/"
+#define ROOT_DIR "/"
+
+#ifdef DEBUG_MODE
+#define RESOURCE_DIR "../Resources/"
+#else
+#define RESOURCE_DIR "./Resources/"
+#endif

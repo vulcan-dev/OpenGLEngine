@@ -7,18 +7,18 @@ CGameLayer::CGameLayer() : CLayer("Game") {
 }
 
 void CGameLayer::AddPrimitive(std::string_view name) {
-    CPrimitiveCube cube;
-    CPrimitiveSphere sphere;
+    VK::CPrimitiveCube cube;
+    VK::CPrimitiveSphere sphere;
 
     this->m_PrimitiveShapeID++;
 
     if (name == "cube") {
         this->m_Meshes.push_back(
-            std::make_shared<CMesh>(&cube, GL_TRIANGLES, glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(1.f))
+            std::make_shared<VK::CMesh>(&cube, GL_TRIANGLES, glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(1.f))
         );
         
         this->m_Models[fmt::format("cube_{}", this->m_PrimitiveShapeID)] = 
-            std::make_shared<CModel>(
+            std::make_shared<VK::CModel>(
                 glm::vec3(0.f), this->m_Materials["Default"].get(), 
                 this->m_Textures["BOX_DIFFUSE"].get(), 
                 this->m_Textures["BOX_SPECULAR"].get(), 
@@ -28,11 +28,11 @@ void CGameLayer::AddPrimitive(std::string_view name) {
         APP_INFO("Added Cube, ID = {}", this->m_PrimitiveShapeID);
     } else if (name == "sphere") {
         this->m_Meshes.push_back(
-            std::make_shared<CMesh>(&sphere, GL_TRIANGLE_STRIP, glm::vec3(0.f, 3.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(1.f))
+            std::make_shared<VK::CMesh>(&sphere, GL_TRIANGLE_STRIP, glm::vec3(0.f, 3.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(1.f))
         );
 
         this->m_Models[fmt::format("sphere_{}", this->m_PrimitiveShapeID)] =
-            std::make_shared<CModel>(
+            std::make_shared<VK::CModel>(
                 glm::vec3(0.f), this->m_Materials["Default"].get(),
                 this->m_Textures["BOX_DIFFUSE"].get(),
                 this->m_Textures["BOX_SPECULAR"].get(),
@@ -45,7 +45,7 @@ void CGameLayer::AddPrimitive(std::string_view name) {
     }
 }
 
-void CGameLayer::OnAttach(CWindow* window) {
+void CGameLayer::OnAttach(VK::CWindow* window) {
     this->m_Window = window;
 
     APP_INFO("Game Started");
@@ -70,7 +70,7 @@ void CGameLayer::OnAttach(CWindow* window) {
     this->AddTexture("BOX_DIFFUSE", "Textures/Box.png", GL_TEXTURE_2D);
     this->AddTexture("BOX_SPECULAR", "Textures/BoxSpecularMap.png", GL_TEXTURE_2D);
 
-    this->m_Skybox = std::make_shared<CSkybox>(this->m_Window, this->m_Camera.get(), this->m_CameraPosition);
+    this->m_Skybox = std::make_shared<VK::CSkybox>(this->m_Window, "Skyboxes/adams_place_bridge_4k.hdr", this->m_Camera.get(), this->m_CameraPosition);
     this->m_Skybox->SetRotY(90);
 
     glfwGetFramebufferSize(this->m_Window->window, &this->m_Window->width, &this->m_Window->height);
@@ -124,7 +124,7 @@ void CGameLayer::InitializeCamera() {
     this->m_CameraMoveSpeed = 4.5f;
     this->m_FieldOfView = 90.f;
 
-    this->m_Camera = std::make_unique<CPerspectiveCamera>((float)this->m_Window->width, (float)this->m_Window->height);
+    this->m_Camera = std::make_unique<VK::CPerspectiveCamera>((float)this->m_Window->width, (float)this->m_Window->height);
 
     this->m_Camera->SetFieldOfView(this->m_FieldOfView);
     this->m_Camera->SetMovementSpeed(this->m_CameraMoveSpeed);
@@ -144,7 +144,7 @@ void CGameLayer::InitializeKeybinds() {
     this->m_Keys.push_back(GLFW_KEY_SPACE);
     this->m_Keys.push_back(GLFW_KEY_LEFT_ALT);
 
-    this->m_KeyboardControls = std::make_unique<CInput>(this->m_Keys);
+    this->m_KeyboardControls = std::make_unique<VK::CInput>(this->m_Keys);
     this->m_KeyboardControls->SetIsEnabled(true);
     this->m_KeyboardControls->SetupKeyInputs(*this->m_Window->window);
 }

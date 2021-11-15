@@ -2,11 +2,11 @@
 
 #include "../Engine/Layer.h"
 
-class CGameLayer : public CLayer {
+class CGameLayer : public VK::CLayer {
 public:
     CGameLayer();
 
-    void OnAttach(CWindow* window) override;
+    void OnAttach(VK::CWindow* window) override;
     void OnDetach() override;
 
     void OnUpdate(const float& dt) override;
@@ -23,14 +23,14 @@ private:
     void UpdateControls(const float& dt);
 
 private:
-    void AddShader(std::string_view name, std::string_view vertex, std::string_view fragment, std::string_view geometry = "") { this->m_Shaders[name.data()] = std::make_shared<CShader>(vertex.data(), fragment.data()); }
-    inline CShader* GetShader(std::string_view name) { return this->m_Shaders[name.data()].get(); }
+    void AddShader(std::string_view name, std::string_view vertex, std::string_view fragment, std::string_view geometry = "") { this->m_Shaders[name.data()] = std::make_shared<VK::CShader>(vertex.data(), fragment.data()); }
+    inline VK::CShader* GetShader(std::string_view name) { return this->m_Shaders[name.data()].get(); }
 
-    void AddTexture(std::string_view name, std::string_view filename, GLenum type) { this->m_Textures[name.data()] = std::make_shared<CTexture>(filename.data(), type); }
-    inline CTexture* GetTexture(std::string_view name) { return this->m_Textures[name.data()].get(); }
+    void AddTexture(std::string_view name, std::string_view filename, GLenum type) { this->m_Textures[name.data()] = std::make_shared<VK::CTexture>(filename.data(), type); }
+    inline VK::CTexture* GetTexture(std::string_view name) { return this->m_Textures[name.data()].get(); }
 
-    void AddMaterial(std::string_view name, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, GLint diffuseTexture, GLint specularTexture) { this->m_Materials[name.data()] = std::make_shared<CMaterial>(ambient, diffuse, specular, diffuseTexture, specularTexture); }
-    inline CMaterial* GetMaterial(std::string_view name) { return this->m_Materials[name.data()].get(); }
+    void AddMaterial(std::string_view name, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, GLint diffuseTexture, GLint specularTexture) { this->m_Materials[name.data()] = std::make_shared<VK::CMaterial>(ambient, diffuse, specular, diffuseTexture, specularTexture); }
+    inline VK::CMaterial* GetMaterial(std::string_view name) { return this->m_Materials[name.data()].get(); }
 
     void AddPrimitive(std::string_view name);
 
@@ -42,20 +42,20 @@ private:
     float m_FieldOfView;
 
 private:
-    std::map<std::string, Ref<CShader>> m_Shaders;
-    std::map<std::string, Ref<CTexture>> m_Textures;
-    std::map<std::string, Ref<CMaterial>> m_Materials;
+    std::map<std::string, Ref<VK::CShader>> m_Shaders;
+    std::map<std::string, Ref<VK::CTexture>> m_Textures;
+    std::map<std::string, Ref<VK::CMaterial>> m_Materials;
 
-    std::vector<Ref<CMesh>> m_Meshes;
-    std::map<std::string_view, Ref<CModel>> m_Models;
+    std::vector<Ref<VK::CMesh>> m_Meshes;
+    std::map<std::string_view, Ref<VK::CModel>> m_Models;
 
-    Ref<CPerspectiveCamera> m_Camera;
-    Ref<CInput> m_KeyboardControls;
-    Ref<CSkybox> m_Skybox;
+    Ref<VK::CPerspectiveCamera> m_Camera;
+    Ref<VK::CInput> m_KeyboardControls;
+    Ref<VK::CSkybox> m_Skybox;
 
     std::vector<int> m_Keys;
 
-    CWindow* m_Window = nullptr;
+    VK::CWindow* m_Window = nullptr;
     double m_MousePositionX, m_MousePositionY = 0;
     bool m_MouseEnabled;
 

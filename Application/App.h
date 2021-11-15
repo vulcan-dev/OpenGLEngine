@@ -2,17 +2,17 @@
 
 #include "GameLayer.h"
 
-static CApplication* CreateApplication();
+static VK::CApplication* CreateApplication();
 
-class CApp : public CApplication {
+class CApp : public VK::CApplication {
 public:
-    CApp() : CApplication(1920, 1080, "OpenGL Engine", true) {
+    CApp() : VK::CApplication(1920, 1080, "OpenGL Engine", true) {
         PushLayer(new CGameLayer());
     }
 
     ~CApp() {}
 };
 
-CApplication* CreateApplication() {
+VK::CApplication* CreateApplication() {
     return new CApp();
 }
