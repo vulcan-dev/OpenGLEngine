@@ -10,8 +10,9 @@
 namespace VK {
 	class CModel {
 	public:
-		CModel(glm::vec3 position, CMaterial* material, CTexture* orTexDif, CTexture* orTexSpec, Ref<CMesh>& mesh) {
+		CModel(const std::string& displayName, glm::vec3 position, CMaterial* material, CTexture* orTexDif, CTexture* orTexSpec, Ref<CMesh>& mesh) {
 			this->m_Position = position;
+            this->m_Rotation = glm::vec3(0.f);
 			this->m_Material = material;
 			this->m_OverrideTextureDiffuse = orTexDif;
 			this->m_OverrideTextureSpecular = orTexSpec;
@@ -20,14 +21,17 @@ namespace VK {
 
             this->m_Mesh->SetPosition(this->m_Position);
             this->m_Mesh->SetOrigin(this->m_Position);
+            this->m_DisplayName = displayName;
 		}
 
-		//OBJ file loaded model
-		CModel(glm::vec3 position, CMaterial* material, CTexture* orTexDif, CTexture* orTexSpec, const char* objFile) {
+        // Model
+		CModel(const std::string& displayName, const glm::vec3& position, CMaterial* material, CTexture* orTexDif, CTexture* orTexSpec, const char* objFile) {
 			this->m_Position = position;
+            this->m_Rotation = glm::vec3(0.f);
 			this->m_Material = material;
 			this->m_OverrideTextureDiffuse = orTexDif;
 			this->m_OverrideTextureSpecular = orTexSpec;
+            this->m_DisplayName = displayName;
 
 			std::vector<Vertex> mesh = LoadOBJ(objFile);
 			this->m_Mesh = std::make_shared<CMesh>(
@@ -58,36 +62,24 @@ namespace VK {
 
             this->m_Mesh->SetPosition(this->m_Position);
             this->m_Mesh->SetOrigin(this->m_Position);
-
-//			for (auto& i : this->m_Meshes) {
-//				i.second->Move(this->m_Position);
-//				i.second->SetOrigin(this->m_Position);
-//			}
 		}
 
-		~CModel() {
-
-		}
+		~CModel() = default;
 
 		void Render(CShader* shader) {
 			this->UpdateUniforms();
-//			 this->m_Material->SendToShader(*shader);
 
-			// // shader->Bind();
-
-            this->m_Mesh->Render(shader);
-
-//			for (auto& i : this->m_Meshes) {
-//				// this->m_OverrideTextureDiffuse->Bind(0);
-//				// this->m_OverrideTextureSpecular->Bind(1);
-//
-//				i.second->Render(shader); //Activates shader also
-//			}
+            if (Visible) {
+                this->m_Mesh->Render(shader);
+            }
 		}
+
+        inline const std::string& GetDisplayName() const { return this->m_DisplayName; }
 
     public:
         glm::vec3 m_Position;
         glm::vec3 m_Rotation;
+        bool Visible = true;
 
 	private:
 		void UpdateUniforms() {
@@ -100,5 +92,6 @@ namespace VK {
 		CTexture* m_OverrideTextureDiffuse;
 		CTexture* m_OverrideTextureSpecular;
 		Ref<CMesh> m_Mesh;
+        std::string m_DisplayName;
 	};
 }

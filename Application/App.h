@@ -6,7 +6,7 @@ static VK::CApplication* CreateApplication();
 
 class CApp : public VK::CApplication {
 public:
-    CApp() : VK::CApplication(1280, 960, "OpenGL Engine") {
+    CApp() : VK::CApplication(1920, 1080, "OpenGL Engine", true) {
         PushLayer(new CGameLayer());
     }
 

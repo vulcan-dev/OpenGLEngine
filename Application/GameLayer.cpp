@@ -17,7 +17,7 @@ bool CGameLayer::AddPrimitive(std::string_view name) {
         Ref<VK::CMesh> meshCube = std::make_shared<VK::CMesh>(&cube, GL_TRIANGLES, glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(1.f));
 
         meshName = fmt::format("cube_{}", this->m_PrimitiveShapeID);
-        this->m_Models[meshName] = std::make_shared<VK::CModel>(
+        this->m_Models[meshName] = std::make_shared<VK::CModel>("Cube",
                 glm::vec3(0.f),
                 this->m_Materials["Default"].get(),
                 this->m_Textures["BOX_DIFFUSE"].get(),
@@ -32,7 +32,7 @@ bool CGameLayer::AddPrimitive(std::string_view name) {
 
         meshName = fmt::format("sphere_{}", this->m_PrimitiveShapeID);
         this->m_Models[meshName] =
-            std::make_shared<VK::CModel>(
+            std::make_shared<VK::CModel>("Sphere",
                 glm::vec3(0.f), this->m_Materials["Default"].get(),
                 this->m_Textures["BOX_DIFFUSE"].get(),
                 this->m_Textures["BOX_SPECULAR"].get(),
@@ -46,7 +46,7 @@ bool CGameLayer::AddPrimitive(std::string_view name) {
 
         meshName = fmt::format("plane_{}", this->m_PrimitiveShapeID);
         this->m_Models[meshName] =
-            std::make_shared<VK::CModel>(
+            std::make_shared<VK::CModel>("Plane",
                 glm::vec3(0.f), this->m_Materials["Default"].get(),
                 this->m_Textures["BOX_DIFFUSE"].get(),
                 this->m_Textures["BOX_SPECULAR"].get(),
@@ -67,6 +67,7 @@ void CGameLayer::OnAttach(VK::CWindow* window) {
     this->m_Window = window;
 
     this->m_Interface = std::make_shared<CInterface>(this->m_Window->window);
+    this->m_Interface->SetWindowSize(this->m_Window->width, this->m_Window->height);
 
     APP_INFO("Game Started");
 
@@ -98,9 +99,37 @@ void CGameLayer::OnAttach(VK::CWindow* window) {
 
 //    AddPrimitive("plane");
     AddPrimitive("sphere");
+    AddPrimitive("sphere");
+    AddPrimitive("sphere");
+    AddPrimitive("sphere");
+    AddPrimitive("sphere");
+    AddPrimitive("sphere");
     AddPrimitive("cube");
     AddPrimitive("cube");
     AddPrimitive("cube");
+    AddPrimitive("cube");
+    AddPrimitive("cube");
+    AddPrimitive("plane");
+    AddPrimitive("plane");
+    AddPrimitive("plane");
+    AddPrimitive("plane");
+    AddPrimitive("plane");
+    AddPrimitive("plane");
+
+    /*
+     * TODO: Fix rotation
+     * TODO: Fix plane issue
+     * TODO: Re-enable face culling
+     * TODO: Go for a piss
+     * TODO: Make menu not look like crap
+     * TODO: Shader outline
+     * TODO: PBR realtime-reflection (works with skybox currently, nothing else)
+     * TODO: Lights
+     * TODO: Really go for a piss
+     * TODO: Arrows in "editor" to drag object
+     * TODO: Textures
+     * TODO: Model Loading
+     */
 
     // auto filepath = fmt::format("../{}/{}", ROOT_DIR, "Models/Handgun_obj.obj");
     // this->m_Models["Obj"] = std::make_shared<CModel>(
