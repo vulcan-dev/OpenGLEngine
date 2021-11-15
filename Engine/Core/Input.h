@@ -10,10 +10,12 @@ namespace VK {
         CInput(std::vector<int> keysToMonitor);
 
         bool IsKeyDown(const int& key);
+        bool IsKeyUp(const int& key);
+
         inline const bool& GetIsEnabled() const { return this->m_IsEnabled; }
 
         void SetIsEnabled(const bool& value) { this->m_IsEnabled = value; }
-        void SetIsKeyDown(const int& key, const bool& value);
+        void HandleKey(const int& key, const int8_t& action);
 
         ~CInput();
 

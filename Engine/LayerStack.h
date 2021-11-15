@@ -10,6 +10,7 @@ namespace VK {
             for (CLayer* layer : m_Layers) {
                 layer->OnDetach();
                 delete layer;
+                glfwTerminate();
             }
         }
 

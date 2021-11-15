@@ -7,5 +7,6 @@ namespace VK {
         int width, height;
         std::string_view title;
         GLFWwindow* window;
+        bool run;
     };
 }

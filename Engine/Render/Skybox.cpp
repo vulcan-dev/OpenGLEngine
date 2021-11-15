@@ -353,9 +353,9 @@ namespace VK {
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, this->m_Cubemap, 0);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            glDisable(GL_CULL_FACE);
+            // glDisable(GL_CULL_FACE);
             this->RenderSkyboxCube();
-            glEnable(GL_CULL_FACE);
+            // glEnable(GL_CULL_FACE);
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -377,9 +377,9 @@ namespace VK {
         this->m_Shaders["BGShader"]->SetMat4fv(camera->GetView(), "view");
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
-        glDisable(GL_CULL_FACE);
+        // glDisable(GL_CULL_FACE);
         this->RenderSkyboxCube();
-        glEnable(GL_CULL_FACE);
+        // glEnable(GL_CULL_FACE);
         glActiveTexture(0);
     }
 }

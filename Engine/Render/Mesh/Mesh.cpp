@@ -120,12 +120,6 @@ namespace VK {
         this->UpdateModelMatrix();
         this->UpdateUniforms(shader);
 
-        // shader->Set1i(0, "irradianceMap");
-        // shader->Set1i(1, "prefilterMap");
-        // shader->Set1i(2, "brdfLUT");
-        // shader->SetVec3f(glm::vec3(.5f, .5f, .5f), "albedo");
-        // shader->Set1f(1.f, "ao");
-
         glBindVertexArray(this->m_VAO);
 
         if (this->m_TotalIndices > 0) {

@@ -18,6 +18,6 @@
 #include "Render/Mesh/Model.h"
 #include "Render/Mesh/Primitive/Cube.h"
 #include "Render/Mesh/Primitive/Sphere.h"
+#include "Render/Mesh/Primitive/Plane.h"
 
-template<typename T>
-using Ref = std::shared_ptr<T>;
+#include "VKEngine.h"

@@ -6,52 +6,72 @@ CGameLayer::CGameLayer() : CLayer("Game") {
 
 }
 
-void CGameLayer::AddPrimitive(std::string_view name) {
-    VK::CPrimitiveCube cube;
-    VK::CPrimitiveSphere sphere;
-
+bool CGameLayer::AddPrimitive(std::string_view name) {
     this->m_PrimitiveShapeID++;
 
+    std::string meshName;
+
     if (name == "cube") {
-        this->m_Meshes.push_back(
-            std::make_shared<VK::CMesh>(&cube, GL_TRIANGLES, glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(1.f))
-        );
-        
-        this->m_Models[fmt::format("cube_{}", this->m_PrimitiveShapeID)] = 
-            std::make_shared<VK::CModel>(
-                glm::vec3(0.f), this->m_Materials["Default"].get(), 
-                this->m_Textures["BOX_DIFFUSE"].get(), 
-                this->m_Textures["BOX_SPECULAR"].get(), 
-                m_Meshes
-        );
+        VK::CPrimitiveCube cube;
+
+        Ref<VK::CMesh> meshCube = std::make_shared<VK::CMesh>(&cube, GL_TRIANGLES, glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(1.f));
+
+        meshName = fmt::format("cube_{}", this->m_PrimitiveShapeID);
+        this->m_Models[meshName] = std::make_shared<VK::CModel>(
+                glm::vec3(0.f),
+                this->m_Materials["Default"].get(),
+                this->m_Textures["BOX_DIFFUSE"].get(),
+                this->m_Textures["BOX_SPECULAR"].get(),
+                meshCube
+                );
 
         APP_INFO("Added Cube, ID = {}", this->m_PrimitiveShapeID);
     } else if (name == "sphere") {
-        this->m_Meshes.push_back(
-            std::make_shared<VK::CMesh>(&sphere, GL_TRIANGLE_STRIP, glm::vec3(0.f, 3.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(1.f))
-        );
+        VK::CPrimitiveSphere sphere;
+        Ref<VK::CMesh> sphereMesh = std::make_shared<VK::CMesh>(&sphere, GL_TRIANGLE_STRIP, glm::vec3(0.f, 3.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(1.f));
 
-        this->m_Models[fmt::format("sphere_{}", this->m_PrimitiveShapeID)] =
+        meshName = fmt::format("sphere_{}", this->m_PrimitiveShapeID);
+        this->m_Models[meshName] =
             std::make_shared<VK::CModel>(
                 glm::vec3(0.f), this->m_Materials["Default"].get(),
                 this->m_Textures["BOX_DIFFUSE"].get(),
                 this->m_Textures["BOX_SPECULAR"].get(),
-                m_Meshes
+                sphereMesh
         );
 
         APP_INFO("Added Sphere, ID = {}, Name = {}", this->m_PrimitiveShapeID, fmt::format("sphere_{}", this->m_PrimitiveShapeID));
+    } else if (name == "plane") {
+        VK::CPrimitivePlane plane;
+        Ref<VK::CMesh> planeMesh = std::make_shared<VK::CMesh>(&plane, GL_TRIANGLES, glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(1.f));
+
+        meshName = fmt::format("plane_{}", this->m_PrimitiveShapeID);
+        this->m_Models[meshName] =
+            std::make_shared<VK::CModel>(
+                glm::vec3(0.f), this->m_Materials["Default"].get(),
+                this->m_Textures["BOX_DIFFUSE"].get(),
+                this->m_Textures["BOX_SPECULAR"].get(),
+                planeMesh
+        );
     } else {
         this->m_PrimitiveShapeID--;
+        return 1;
     }
+
+    APP_DEBUG("Mesh Name: {}", meshName);
+
+    this->m_Interface->AddModel(this->m_Models);
+    return 0;
 }
 
 void CGameLayer::OnAttach(VK::CWindow* window) {
     this->m_Window = window;
 
+    this->m_Interface = std::make_shared<CInterface>(this->m_Window->window);
+
     APP_INFO("Game Started");
 
     this->InitializeCamera();
-    this->InitializeKeybinds();
+    this->initializeKeybinds();
 
     this->AddShader("Core", "Shaders/VertexCore.vs", "Shaders/FragmentCore.fs", "");
     this->AddShader("PBR", "Shaders/PBR.vs", "Shaders/PBR.fs");
@@ -76,8 +96,11 @@ void CGameLayer::OnAttach(VK::CWindow* window) {
     glfwGetFramebufferSize(this->m_Window->window, &this->m_Window->width, &this->m_Window->height);
     glViewport(0, 0, this->m_Window->width, this->m_Window->height);
 
-    AddPrimitive("cube");
+//    AddPrimitive("plane");
     AddPrimitive("sphere");
+    AddPrimitive("cube");
+    AddPrimitive("cube");
+    AddPrimitive("cube");
 
     // auto filepath = fmt::format("../{}/{}", ROOT_DIR, "Models/Handgun_obj.obj");
     // this->m_Models["Obj"] = std::make_shared<CModel>(
@@ -92,7 +115,19 @@ void CGameLayer::OnAttach(VK::CWindow* window) {
 void CGameLayer::OnUpdate(const float& dt) {
     this->UpdateControls(dt);
     this->UpdateObjects(dt);
-    this->UpdateCamera(dt);
+
+//    EventModify<bool> wireframe(&this->m_Interface->Wireframe, [this]() {
+//        int mode = GL_FILL;
+//        this->m_Interface->Wireframe ? GL_LINE : GL_FILL;
+//        glPolygonMode(GL_FRONT_AND_BACK, mode);
+//        APP_DEBUG("Changed");
+//    });
+
+    if (!this->m_MouseEnabled)
+        this->UpdateCamera(dt);
+    /*
+     * RunOnModify(variable, lambda);
+     */
 }
 
 void CGameLayer::OnRender(const float& dt) {
@@ -105,6 +140,8 @@ void CGameLayer::OnRender(const float& dt) {
     for (const auto& model : this->m_Models) {
         model.second->Render(this->m_Shaders["PBR"].get());
     }
+
+    this->m_Interface->Render(dt);
 }
 
 void CGameLayer::UpdateObjects(const float& dt) {
@@ -131,7 +168,7 @@ void CGameLayer::InitializeCamera() {
     this->m_Camera->SetMouseSensitivity(.1f);
 }
 
-void CGameLayer::InitializeKeybinds() {
+void CGameLayer::initializeKeybinds() {
     glfwSetInputMode(this->m_Window->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     this->m_Keys.push_back(GLFW_KEY_W);
@@ -139,6 +176,7 @@ void CGameLayer::InitializeKeybinds() {
     this->m_Keys.push_back(GLFW_KEY_S);
     this->m_Keys.push_back(GLFW_KEY_D);
     this->m_Keys.push_back(GLFW_KEY_ESCAPE);
+    this->m_Keys.push_back(GLFW_KEY_F1);
     this->m_Keys.push_back(GLFW_KEY_LEFT_CONTROL);
     this->m_Keys.push_back(GLFW_KEY_LEFT_SHIFT);
     this->m_Keys.push_back(GLFW_KEY_SPACE);
@@ -172,19 +210,16 @@ void CGameLayer::UpdateCamera(const float& dt) {
 void CGameLayer::UpdateControls(const float& dt) {
     glfwGetCursorPos(this->m_Window->window, &this->m_MousePositionX, &this->m_MousePositionY);
     float velocity = this->m_CameraMoveSpeed * dt;
-    
-    // if (this->m_KeyboardControls->IsKeyDown(GLFW_KEY_ESCAPE)) {
-    //     this->m_MouseEnabled = !this->m_MouseEnabled;
-    //     APP_DEBUG("Pressed Once"); That guys input library sucks ass so gonna make my own that's not absolute dog shit
 
-    //     // if (!this->m_MouseEnabled) {
-    //     //     APP_DEBUG("Disabling Mouse");
-    //     //     glfwSetInputMode(this->m_Window->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    //     // } else {
-    //     //     APP_DEBUG("Enabling Mouse");
-    //     //     glfwSetInputMode(this->m_Window->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    //     // }
-    // }
+    if (this->m_KeyboardControls->IsKeyUp(GLFW_KEY_ESCAPE)) {
+        glfwTerminate();
+    }
+
+    if (this->m_KeyboardControls->IsKeyUp(GLFW_KEY_F1)) {
+        this->m_MouseEnabled = !this->m_MouseEnabled;
+
+        glfwSetInputMode(this->m_Window->window, GLFW_CURSOR, this->m_MouseEnabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+    }
 
     // x
     if (this->m_KeyboardControls->IsKeyDown(GLFW_KEY_A)) {

@@ -34,20 +34,24 @@ namespace VK {
 			this->m_Rotation.z += angle;
 		}
 
+        void SetRotation(glm::vec3 rotation) {
+			this->m_Rotation = rotation;
+		}
+
 		void SetPosition(const glm::vec3& pos) {
-			this->m_Position += pos;
+			this->m_Position = pos;
 		}
 
 		void SetRotationX(const float& angle) {
-			this->m_Rotation.x += angle;
+			this->m_Rotation.x = angle;
 		}
 
 		void SetRotationY(const float& angle) {
-			this->m_Rotation.y += angle;
+			this->m_Rotation.y = angle;
 		}
 
 		void SetRotationZ(const float& angle) {
-			this->m_Rotation.z += angle;
+			this->m_Rotation.z = angle;
 		}
 
 		~CMesh();

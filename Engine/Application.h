@@ -8,7 +8,6 @@ namespace VK {
     public:
         CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle, bool borderless = false);
 
-        void Render();
         void OnAttach(CWindow* window);
         void OnDetatch();
 
@@ -33,6 +32,8 @@ namespace VK {
         void InitializeOpenGL();
         void UpdateTime();
         void UpdateInput();
+        void Update();
+        void Render();
 
     private:
         static void error_callback(int error, const char* description);

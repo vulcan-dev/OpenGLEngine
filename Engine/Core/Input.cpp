@@ -12,6 +12,7 @@ namespace VK {
         }
 
         CInput::m_Instances.push_back(this);
+        this->m_CurrentKey = 0;
     }
 
     CInput::~CInput() {
@@ -21,7 +22,7 @@ namespace VK {
     bool CInput::IsKeyDown(const int& key) {
         bool result = false;
         if (this->m_IsEnabled) {
-            std::map<int,bool>::iterator it = this->m_Keys.find(key);
+            std::map<int, bool>::iterator it = this->m_Keys.find(key);
             if (it != this->m_Keys.end()) {
                 result = this->m_Keys[key];
             }
@@ -30,10 +31,22 @@ namespace VK {
         return result;
     }
 
-    void CInput::SetIsKeyDown(const int& key, const bool& value) {
-        std::map<int,bool>::iterator it = this->m_Keys.find(key);
+    bool CInput::IsKeyUp(const int &key) {
+        if (key == this->m_CurrentKey) {
+            this->m_CurrentKey = 0;
+            return true;
+        }
+
+        return false;
+    }
+
+    void CInput::HandleKey(const int& key, const int8_t& action) {
+        if (action == GLFW_RELEASE)
+            this->m_CurrentKey = key;
+
+        std::map<int, bool>::iterator it = this->m_Keys.find(key);
         if (it != this->m_Keys.end()) {
-            this->m_Keys[key] = value;
+            this->m_Keys[key] = action;
         }
     }
 
@@ -43,7 +56,7 @@ namespace VK {
 
     void CInput::Callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
         for (CInput* keyInput : m_Instances) {
-            keyInput->SetIsKeyDown(key, action != GLFW_RELEASE);
+            keyInput->HandleKey(key, action);
         }
     }
 }
