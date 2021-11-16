@@ -38,7 +38,7 @@ private:
     void AddMaterial(std::string_view name, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, GLint diffuseTexture, GLint specularTexture) { this->m_Materials[name.data()] = std::make_shared<VK::CMaterial>(ambient, diffuse, specular, diffuseTexture, specularTexture); }
     inline VK::CMaterial* GetMaterial(std::string_view name) { return this->m_Materials[name.data()].get(); }
 
-    bool AddPrimitive(std::string_view name);
+    bool AddPrimitive(std::string_view name, const glm::vec3& pos = glm::vec3(0.f));
 
 private:
     glm::vec3 m_CameraPosition;
@@ -59,13 +59,16 @@ private:
     Ref<VK::CInput> m_KeyboardControls;
     Ref<VK::CSkybox> m_Skybox;
 
+    Ref<VK::CLine> m_DebugLine;
+
     Ref<CInterface> m_Interface;
 
     std::vector<int> m_Keys;
 
     VK::CWindow* m_Window = nullptr;
     double m_MousePositionX, m_MousePositionY = 0;
-    bool m_MouseEnabled;
+    bool m_MouseEnabled = true;
+    bool m_WasMouseEnabled = false;
 
     uint16_t m_PrimitiveShapeID = 0;
 };

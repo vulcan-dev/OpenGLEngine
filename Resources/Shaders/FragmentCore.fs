@@ -1,23 +1,7 @@
-#version 440
+#version 460 core
 
-struct Material {
-	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
-	sampler2D diffuseTex;
-	sampler2D specularTex;
-};
-
-in vec3 vs_position;
-in vec3 vs_color;
-in vec2 vs_texcoord;
-in vec3 vs_normal;
-
-out vec3 fs_color;
-
-uniform Material material;
-uniform vec3 cameraPos;
+out vec4 FragColor;
 
 void main() {
-	fs_color = vec3(texture(material.diffuseTex, vs_texcoord));
+	FragColor = vec4(1.f, 0.f, 0.f, 1.f);
 }

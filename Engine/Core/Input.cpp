@@ -51,12 +51,19 @@ namespace VK {
     }
 
     void CInput::SetupKeyInputs(GLFWwindow& window) {
-        glfwSetKeyCallback(&window, CInput::Callback);
+        glfwSetKeyCallback(&window, CInput::KeyCallback);
+        glfwSetMouseButtonCallback(&window, CInput::MouseCallback);
     }
 
-    void CInput::Callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    void CInput::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
         for (CInput* keyInput : m_Instances) {
             keyInput->HandleKey(key, action);
+        }
+    }
+
+    void CInput::MouseCallback(GLFWwindow *window, int button, int action, int mods) {
+        for (CInput* keyInput : m_Instances) {
+            keyInput->HandleKey(button, action);
         }
     }
 }

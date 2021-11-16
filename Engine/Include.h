@@ -20,4 +20,6 @@
 #include "Render/Mesh/Primitive/Sphere.h"
 #include "Render/Mesh/Primitive/Plane.h"
 
+#include "Render/Line.h"
+
 #include "VKEngine.h"

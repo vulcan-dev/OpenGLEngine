@@ -134,13 +134,12 @@ void main()
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
     vec3 ambient = (kD * diffuse + specular) * ao;
-    
-    vec3 color = ambient + Lo;
 
+    vec3 color = ambient + Lo; // if we just want red then remove ambient (or use a core shader)
     // HDR tonemapping
     color = color / (color + vec3(1.0));
     // gamma correct
-    color = pow(color, vec3(1.0/2.2)); 
+    color = pow(color, vec3(1.0/2.2));
 
     FragColor = vec4(color , 1.0);
 }

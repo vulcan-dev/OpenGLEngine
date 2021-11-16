@@ -89,7 +89,6 @@ namespace VK {
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->m_TotalIndices * sizeof(GLuint), this->m_IndexArray, GL_STATIC_DRAW);
         }
 
-        unsigned int stride = (3 + 2 + 3) * sizeof(float);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
 
@@ -108,11 +107,10 @@ namespace VK {
 
     void CMesh::UpdateModelMatrix() {
         this->m_ModelMatrix = glm::mat4(1.f);
-        this->m_ModelMatrix = glm::translate(this->m_ModelMatrix, this->m_Origin);
+        this->m_ModelMatrix = glm::translate(this->m_ModelMatrix, this->m_Position);
         this->m_ModelMatrix = glm::rotate(this->m_ModelMatrix, glm::radians(this->m_Rotation.x), glm::vec3(1.f, 0.f, 0.f));
         this->m_ModelMatrix = glm::rotate(this->m_ModelMatrix, glm::radians(this->m_Rotation.y), glm::vec3(0.f, 1.f, 0.f));
         this->m_ModelMatrix = glm::rotate(this->m_ModelMatrix, glm::radians(this->m_Rotation.z), glm::vec3(0.f, 0.f, 1.f));
-        this->m_ModelMatrix = glm::translate(this->m_ModelMatrix, this->m_Position - this->m_Origin);
         this->m_ModelMatrix = glm::scale(this->m_ModelMatrix, this->m_Scale);
     }
 

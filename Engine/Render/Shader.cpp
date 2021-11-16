@@ -8,20 +8,23 @@ namespace VK {
         GLuint vertexShader = 0;
         GLuint fragmentShader = 0;
         GLuint geometryShader = 0;
+        GLuint shader = 0;
 
-        vertexShader = this->LoadFromFile(GL_VERTEX_SHADER, vertexFile.data());
-        fragmentShader = this->LoadFromFile(GL_FRAGMENT_SHADER, fragmentFile.data());
-        if (geometryFile != "") geometryShader = this->LoadFromFile(GL_GEOMETRY_SHADER, geometryFile.data());
+        shader = this->LoadFromFile(vertexFile.data(), fragmentFile.data());
 
-        CORE_INFO("Loaded Shaders: {} {} {}", vertexFile, fragmentFile, geometryFile);
-
-        if (vertexShader != 0 && fragmentShader != 0) {
-            this->LinkProgram(vertexShader, fragmentShader, geometryShader);
-
-            glDeleteShader(vertexShader);
-            glDeleteShader(fragmentShader);
-            glDeleteShader(geometryShader);
-        }
+//        vertexShader = this->LoadFromFile(GL_VERTEX_SHADER, vertexFile.data());
+//        fragmentShader = this->LoadFromFile(GL_FRAGMENT_SHADER, fragmentFile.data());
+//        if (geometryFile != "") geometryShader = this->LoadFromFile(GL_GEOMETRY_SHADER, geometryFile.data());
+//
+//        CORE_INFO("Loaded Shaders: {} {} {}", vertexFile, fragmentFile, geometryFile);
+//
+//        if (vertexShader != 0 && fragmentShader != 0) {
+//            this->LinkProgram(vertexShader, fragmentShader, geometryShader);
+//
+//            glDeleteShader(vertexShader);
+//            glDeleteShader(fragmentShader);
+//            glDeleteShader(geometryShader);
+//        }
     }
 
     GLuint CShader::LoadFromFile(std::string vertex_file_path, std::string fragment_file_path) {
@@ -70,11 +73,11 @@ namespace VK {
         if ( InfoLogLength > 0 ){
             std::vector<char> VertexShaderErrorMessage(InfoLogLength+1);
             glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-            CORE_ERROR("{}", &VertexShaderErrorMessage[0]);
+            CORE_ERROR("{} {}", vertex_file_path, &VertexShaderErrorMessage[0]);
+            return -0;
         }
 
         // Compile Fragment Shader
-        // CORE_INFO("Compiling Shader: {}", fragment_file_path);
         char const * FragmentSourcePointer = FragmentShaderCode.c_str();
         glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer , NULL);
         glCompileShader(FragmentShaderID);
@@ -85,15 +88,11 @@ namespace VK {
         if ( InfoLogLength > 0 ){
             std::vector<char> FragmentShaderErrorMessage(InfoLogLength+1);
             glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-            CORE_ERROR("{}", &FragmentShaderErrorMessage[0]);
+            CORE_ERROR("{} {}", fragment_file_path, &FragmentShaderErrorMessage[0]);
+            return -1;
         }
 
-        // Link the program
-        // CORE_INFO("Linking Program");
         GLuint ProgramID = glCreateProgram();
-        glAttachShader(ProgramID, VertexShaderID);
-        glAttachShader(ProgramID, FragmentShaderID);
-        glLinkProgram(ProgramID);
 
         // Check the program
         glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
@@ -101,14 +100,11 @@ namespace VK {
         if ( InfoLogLength > 0 ){
             std::vector<char> ProgramErrorMessage(InfoLogLength+1);
             glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-            CORE_ERROR("{}", &ProgramErrorMessage[0]);
+            CORE_ERROR("[ID: {}] [VT: {}] [FG: {}]: {}", ProgramID, vertex_file_path, fragment_file_path, &ProgramErrorMessage[0]);
+            return -1;
+        } else {
+            this->LinkProgram(VertexShaderID, FragmentShaderID);
         }
-        
-        glDetachShader(ProgramID, VertexShaderID);
-        glDetachShader(ProgramID, FragmentShaderID);
-        
-        glDeleteShader(VertexShaderID);
-        glDeleteShader(FragmentShaderID);
 
         return ProgramID;
     }
@@ -139,9 +135,9 @@ namespace VK {
         glGetShaderiv(shader, GL_COMPILE_STATUS, &Result);
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &InfoLogLength);
         if (InfoLogLength > 0){
-            std::vector<char> shaderErrorMessage(InfoLogLength+1);
-            glGetShaderInfoLog(shader, InfoLogLength, NULL, &shaderErrorMessage[0]);
-            CORE_ERROR("{}", &shaderErrorMessage[0]);
+            std::vector<char> ProgramErrorMessage(InfoLogLength+1);
+//            glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
+            CORE_ERROR("[Type: {}] [File: {}]: {}", type, filename, InfoLogLength);
             return -1;
         }
 

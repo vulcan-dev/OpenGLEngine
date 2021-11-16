@@ -19,6 +19,22 @@ namespace VK {
 
         inline const glm::mat4& GetProjection() { return this->m_Projection; }
         inline glm::mat4 GetView() { return glm::lookAt(this->m_Position, this->m_Position + this->m_Front, this->m_Up); }
+        inline glm::vec4 GetEye(int mouse_x, int mouse_y, int width, int height) {
+            float x = (2.0f * mouse_x) / width - 1.0f;
+            float y = 1.0f - (2.0f * mouse_y) / height;
+            float z = 1.0f;
+            glm::vec3 ray_nds = glm::vec3(x, y, z);
+
+            glm::vec4 ray_clip = glm::vec4(ray_nds.x, ray_nds.y, -1.0, 1.0);
+            glm::vec4 ray_eye = inverse(this->GetProjection()) * ray_clip;
+            ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
+            return ray_eye;
+        }
+
+        inline glm::vec3 RayWorld(int mouse_x, int mouse_y, int width, int height) {
+            glm::vec3 ray_word = (inverse(this->GetView()) * this->GetEye(mouse_x, mouse_y, width, height));
+            return glm::normalize(ray_word);
+        }
 
         inline const glm::vec3& GetPosition() { return this->m_Position; }
         inline const glm::vec3& GetFront() { return this->m_Front; };

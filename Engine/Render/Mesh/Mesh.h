@@ -56,6 +56,9 @@ namespace VK {
 
 		~CMesh();
 
+    public:
+        glm::mat4 m_ModelMatrix;
+
 	private:
 		void InitializeVAO();
 		void UpdateUniforms(CShader* Shader);
@@ -72,8 +75,6 @@ namespace VK {
 		glm::vec3 m_Rotation;
 		glm::vec3 m_Scale;
 		int m_Type;
-
-		glm::mat4 m_ModelMatrix, m_ViewMatrix;
 
 		Vertex * m_VertexArray;
 		GLuint* m_IndexArray;

@@ -19,10 +19,13 @@ namespace VK {
     }
 
     void CPerspectiveCamera::UpdateUniforms(CShader* shader) {
-        auto vm = this->GetProjection() * this->GetView() * glm::mat4(1.f);
+        shader->Bind();
 
-        shader->SetMat4fv(vm, "VP");
-        shader->SetVec3f(this->m_Position, "cameraPos");
+        shader->SetMat4fv(this->GetView(), "view");
+        shader->SetVec3f(this->m_Position, "camPos");
+        shader->SetMat4fv(this->m_Projection, "projection");
+
+        shader->Unbind();
     }
 
     void CPerspectiveCamera::Update(float xoffset, float yoffset, bool constrainPitch) {
@@ -41,6 +44,8 @@ namespace VK {
             if (this->m_Pitch > 89.0f) this->m_Pitch = 89.0f;
             if (this->m_Pitch < -89.0f) this->m_Pitch = -89.0f;
         }
+
+        this->UpdateCameraVectors();
     }
 
     void CPerspectiveCamera::UpdateCameraVectors() {
@@ -49,6 +54,7 @@ namespace VK {
         this->m_Front.z = sin(glm::radians(this->m_Yaw)) * cos(glm::radians(this->m_Pitch));
 
         this->m_Front = glm::normalize(this->m_Front);
+
         this->m_Right = glm::normalize(glm::cross(this->m_Front, this->m_WorldUp));
         this->m_Up = glm::normalize(glm::cross(this->m_Right, this->m_Front));
     }

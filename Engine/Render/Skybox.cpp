@@ -148,9 +148,11 @@ namespace VK {
 
         this->AddShader("PFShader", "Shaders/Cubemap.vs", "Shaders/Prefilter.fs");
         this->AddShader("BRDFShader", "Shaders/BRDF.vs", "Shaders/BRDF.fs");
+        this->AddShader("PBR", "Shaders/PBR.vs", "Shaders/PBR.fs");
 
         this->m_Shaders["BGShader"]->Bind();
         this->m_Shaders["BGShader"]->Set1i(0, "environmentMap");
+        this->m_Shaders["BGShader"]->Unbind();
 
         glGenFramebuffers(1, &captureFBO);
         glGenRenderbuffers(1, &captureRBO);
@@ -219,6 +221,7 @@ namespace VK {
         // then let OpenGL generate mipmaps from first mip face (combatting visible dots artifact)
         glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+        this->m_Shaders["ETCShader"]->Unbind();
 
         // pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
         // --------------------------------------------------------------------------------
@@ -255,6 +258,7 @@ namespace VK {
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        this->m_Shaders["IShader"]->Unbind();
 
         // pbr: create a pre-filter cubemap, and re-scale capture FBO to pre-filter scale.
         // --------------------------------------------------------------------------------
@@ -302,6 +306,7 @@ namespace VK {
                 this->RenderSkyboxCube();
             }
         }
+        this->m_Shaders["PFShader"]->Unbind();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // pbr: generate a 2D LUT from the BRDF equations used.
@@ -324,7 +329,7 @@ namespace VK {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->m_brdfLUTTexture, 0);
 
         glViewport(0, 0, 2048, 2048);
-        this->m_Shaders["BRDFShader"]->Bind();
+//        this->m_Shaders["BRDFShader"]->Bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderQuad();
 
@@ -333,6 +338,7 @@ namespace VK {
         /* Initialize Uniforms */
         this->m_Shaders["BGShader"]->Bind();
         this->m_Shaders["BGShader"]->SetMat4fv(captureProjection, "projection");
+        this->m_Shaders["BGShader"]->Unbind();
     }
 
     void CSkybox::UpdateUniforms(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
@@ -340,46 +346,67 @@ namespace VK {
     }
 
     void CSkybox::Render(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
-        this->m_Shaders["ETCShader"]->Bind();
-        this->m_Shaders["ETCShader"]->Set1i(0, "equirectangularMap");
-        this->m_Shaders["ETCShader"]->SetMat4fv(captureProjection, "projection");
+        this->m_Shaders["PBR"]->Bind();
+        glm::mat4 view = camera->GetView();
+        this->m_Shaders["PBR"]->SetMat4fv(view, "view");
+        this->m_Shaders["PBR"]->SetVec3f(cameraPos, "camPos");
+        this->m_Shaders["PBR"]->Unbind();
+
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, this->m_Texture);
-
-        glViewport(0, 0, 2048, 2048);
-        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-        for (unsigned int i = 0; i < 6; ++i) {
-            this->m_Shaders["ETCShader"]->SetMat4fv(captureViews[i] * rotationY(m_rot), "view");
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, this->m_Cubemap, 0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-             glDisable(GL_CULL_FACE);
-            this->RenderSkyboxCube();
-             glEnable(GL_CULL_FACE);
-        }
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
-        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-
-        glViewport(0, 0, this->m_Window->width, this->m_Window->height);
-
+        glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_IrradianceMap);
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, this->GetIMap());
+        glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_PrefilterMap);
         glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, this->GetPFMap());
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, this->GetBRDFLUTT());
+        glBindTexture(GL_TEXTURE_2D, this->m_brdfLUTTexture);
 
         this->m_Shaders["BGShader"]->Bind();
-        this->m_Shaders["BGShader"]->SetMat4fv(captureProjection, "projection");
         this->m_Shaders["BGShader"]->SetMat4fv(camera->GetView(), "view");
-        glActiveTexture(GL_TEXTURE4);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
-         glDisable(GL_CULL_FACE);
-        this->RenderSkyboxCube();
-         glEnable(GL_CULL_FACE);
         glActiveTexture(0);
+        this->RenderSkyboxCube();
+        this->m_Shaders["BGShader"]->Unbind();
+
+//        this->SetRotY(1 * glfwGetTime());
+//        this->m_Shaders["ETCShader"]->Bind();
+//        this->m_Shaders["ETCShader"]->Set1i(0, "equirectangularMap");
+//        this->m_Shaders["ETCShader"]->SetMat4fv(captureProjection, "projection");
+//        glActiveTexture(GL_TEXTURE0);
+//        glBindTexture(GL_TEXTURE_2D, this->m_Texture);
+//
+//        glViewport(0, 0, 2048, 2048);
+//        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+//        for (unsigned int i = 0; i < 6; ++i) {
+//            this->m_Shaders["ETCShader"]->SetMat4fv(captureViews[i] * rotationY(m_rot), "view");
+//            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, this->m_Cubemap, 0);
+//            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//
+//            glDisable(GL_CULL_FACE);
+//            this->RenderSkyboxCube();
+//            glEnable(GL_CULL_FACE);
+//        }
+//
+//        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//
+//        glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
+//        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+//
+//        glViewport(0, 0, this->m_Window->width, this->m_Window->height);
+//
+//        glActiveTexture(GL_TEXTURE1);
+//        glBindTexture(GL_TEXTURE_CUBE_MAP, this->GetIMap());
+//        glActiveTexture(GL_TEXTURE2);
+//        glBindTexture(GL_TEXTURE_CUBE_MAP, this->GetPFMap());
+//        glActiveTexture(GL_TEXTURE3);
+//        glBindTexture(GL_TEXTURE_2D, this->GetBRDFLUTT());
+//
+//        this->m_Shaders["BGShader"]->Bind();
+//        this->m_Shaders["BGShader"]->SetMat4fv(camera->GetView(), "view");
+//        glActiveTexture(GL_TEXTURE4);
+//        glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
+//         glDisable(GL_CULL_FACE);
+//        this->RenderSkyboxCube();
+//         glEnable(GL_CULL_FACE);
+//        glActiveTexture(0);
     }
 }
