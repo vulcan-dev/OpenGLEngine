@@ -7,25 +7,25 @@
 namespace VK {
     class CInput {
     public:
-        CInput(std::vector<int> keysToMonitor);
+        CInput();
 
-        bool IsKeyDown(const int& key);
-        bool IsKeyUp(const int& key);
+        static bool IsKeyDown(const int& key);
+        static bool IsKeyUp(const int& key);
 
-        inline const bool& GetIsEnabled() const { return this->m_IsEnabled; }
+//        static inline const bool& GetIsEnabled();
 
-        void SetIsEnabled(const bool& value) { this->m_IsEnabled = value; }
-        void HandleKey(const int& key, const int8_t& action);
+        static void SetIsEnabled(const bool& value);
+        static void HandleKey(const int& key, const int8_t& action);
 
         ~CInput();
 
     public:
-        static void SetupKeyInputs(GLFWwindow& window);
+        static void SetupKeyInputs(GLFWwindow& window, std::vector<int> keysToMonitor);
         static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
         static void MouseCallback(GLFWwindow* window, int button, int action, int mods);
 
     private:
-        static std::vector<CInput*> m_Instances;
+        static CInput* m_Instance;
         std::map<int, bool> m_Keys;
         bool m_IsEnabled;
 

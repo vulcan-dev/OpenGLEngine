@@ -73,18 +73,19 @@ bool CGameLayer::AddPrimitive(std::string_view name, const glm::vec3& pos) {
     return 0;
 }
 
-void CGameLayer::OnAttach(VK::CWindow* window) {
-    this->m_Window = window;
-
-    this->m_Interface = std::make_shared<CInterface>(this->m_Window->window);
-    this->m_Interface->SetWindowSize(this->m_Window->width, this->m_Window->height);
+void CGameLayer::OnAttach() {
+    this->m_Interface = std::make_shared<CInterface>(VK::CApplication::GetWindow());
+    this->m_Interface->SetWindowSize(VK::CApplication::GetWindowSize().x, VK::CApplication::GetWindowSize().y);
 
     APP_INFO("Game Started");
 
+    VK::Resources::Initialize();
+
+    this->InitializeKeybinds();
     this->InitializeCamera();
-    this->initializeKeybinds();
 
     this->AddShader("Core", "Shaders/VertexCore.vs", "Shaders/FragmentCore.fs", "");
+//    VK::Resources::LoadShader("Core", "Shaders/VertexCore.vs", "Shaders/FragmentCore.fs");
     this->AddShader("PBR", "Shaders/PBR.vs", "Shaders/PBR.fs");
 
     this->AddMaterial("Default", glm::vec3(0.1f), glm::vec3(1.f, 0.f, 0.f), glm::vec3(1.f), 0, 1);
@@ -98,7 +99,7 @@ void CGameLayer::OnAttach(VK::CWindow* window) {
     this->m_Shaders["PBR"]->SetVec3f(glm::vec3(.5f, .5f, .5f), "albedo");
     this->m_Shaders["PBR"]->Set1f(1.f, "ao");
 
-//    this->m_Shaders["PBR"]->SetMat4fv(glm::perspective(glm::radians(90.0f), (float)this->m_Window->width / (float)this->m_Window->height, 0.1f, 100.0f), "projection");
+//    this->m_Shaders["PBR"]->SetMat4fv(glm::perspective(glm::radians(90.0f), (float)VK::CApplication::GetWindowSize().x / (float)VK::CApplication::GetWindowSize().y, 0.1f, 100.0f), "projection");
 
     this->AddTexture("BOX_DIFFUSE", "Textures/Box.png", GL_TEXTURE_2D);
     this->AddTexture("BOX_SPECULAR", "Textures/BoxSpecularMap.png", GL_TEXTURE_2D);
@@ -108,8 +109,8 @@ void CGameLayer::OnAttach(VK::CWindow* window) {
 
     this->m_DebugLine = std::make_shared<VK::CLine>(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 2.f));
 
-    glfwGetFramebufferSize(this->m_Window->window, &this->m_Window->width, &this->m_Window->height);
-    glViewport(0, 0, this->m_Window->width, this->m_Window->height);
+//    glfwGetFramebufferSize(VK::CApplication::GetWindow(), &VK::CApplication::GetWindowSize().x, &VK::CApplication::GetWindowSize().y);
+//    glViewport(0, 0, VK::CApplication::GetWindowSize().x, VK::CApplication::GetWindowSize().y);
 
     AddPrimitive("cube");
     AddPrimitive("sphere", glm::vec3(3.f, 4.f, 0.f));
@@ -118,21 +119,21 @@ void CGameLayer::OnAttach(VK::CWindow* window) {
 void CGameLayer::OnUpdate(const float& dt) {
     this->m_Interface->FPS = static_cast<int16_t>(1.f/dt);
 
-    if (this->m_KeyboardControls->IsKeyDown(GLFW_MOUSE_BUTTON_RIGHT)) {
-        glfwSetInputMode(this->m_Window->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    if (VK::CInput::IsKeyDown(GLFW_MOUSE_BUTTON_RIGHT)) {
+        glfwSetInputMode(VK::CApplication::GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         if (!this->m_WasMouseEnabled) {
-            glfwSetCursorPos(this->m_Window->window, this->m_LastX, this->m_LastY);
+            glfwSetCursorPos(VK::CApplication::GetWindow(), this->m_LastX, this->m_LastY);
             this->m_WasMouseEnabled = true;
         }
         this->m_MouseEnabled = false;
         this->m_Camera->SetPosition(this->m_CameraPosition);
         this->UpdateCamera(dt);
-    } else if (this->m_KeyboardControls->IsKeyUp(GLFW_MOUSE_BUTTON_RIGHT)) {
-        glfwSetInputMode(this->m_Window->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    } else if (VK::CInput::IsKeyUp(GLFW_MOUSE_BUTTON_RIGHT)) {
+        glfwSetInputMode(VK::CApplication::GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         this->m_MouseEnabled = true;
         this->m_WasMouseEnabled = false;
-        this->m_LastX = this->m_Window->width / 2.0f;
-        this->m_LastY = this->m_Window->height / 2.0f;
+        this->m_LastX = VK::CApplication::GetWindowSize().x / 2.0f;
+        this->m_LastY = VK::CApplication::GetWindowSize().y / 2.0f;
     }
 
     this->UpdateObjects(dt);
@@ -141,14 +142,16 @@ void CGameLayer::OnUpdate(const float& dt) {
 
 void CGameLayer::OnRender(const float& dt) {
     // Core
-//    this->m_Shaders["Core"]->Bind();
-//    this->m_Shaders["Core"]->SetMat4fv(this->m_Camera->GetView(), "view");
-//    this->m_Shaders["Core"]->SetVec3f(this->m_CameraPosition, "camPos");
-//    this->m_Shaders["Core"]->SetMat4fv(this->m_Camera->GetProjection(), "projection");
-//    this->m_DebugLine->SetPosition(glm::vec3(this->m_CameraPosition.x, this->m_CameraPosition.y, this->m_CameraPosition.z));
+//    VK::Resources::GetShader("Default")->Unbind();
+    this->m_Shaders["Core"]->Bind();
+    this->m_Shaders["Core"]->SetMat4fv(this->m_Camera->GetView(), "view");
+    this->m_Shaders["Core"]->SetVec3f(this->m_CameraPosition, "camPos");
+    this->m_Shaders["Core"]->SetMat4fv(this->m_Camera->GetProjection(), "projection");
+    this->m_DebugLine->SetPosition(glm::vec3(this->m_CameraPosition.x / 2 - VK::CApplication::GetWindowSize().x / 2, this->m_CameraPosition.y / 2 - VK::CApplication::GetWindowSize().y / 2, this->m_CameraPosition.z));
+    this->m_DebugLine->Render(this->m_Shaders["Core"].get());
 
-//    this->m_DebugLine->Render(this->m_Shaders["Core"].get());
-//    this->m_Shaders["Core"]->Unbind();
+
+    this->m_Shaders["Core"]->Unbind();
 
     // PBR
     this->m_Skybox->Render(this->m_Camera.get(), this->m_CameraPosition);
@@ -164,7 +167,7 @@ void CGameLayer::OnRender(const float& dt) {
 
 void CGameLayer::UpdateObjects(const float& dt) {
     for (const auto& o : this->m_Models) {
-        glm::vec3 ray = this->m_Camera->RayWorld(this->m_MousePositionX, this->m_MousePositionY, this->m_Window->width, this->m_Window->height);
+        glm::vec3 ray = this->m_Camera->RayWorld(VK::CApplication::GetMousePosition().x, VK::CApplication::GetMousePosition().y, VK::CApplication::GetWindowSize().x, VK::CApplication::GetWindowSize().y);
         if (o.second->Intersects(ray, this->m_Camera->GetProjection(), this->m_Camera->GetView())) {
             this->m_Interface->Debug = fmt::format("Intersecting {}", o.second->GetDisplayName());
         }
@@ -176,22 +179,22 @@ void CGameLayer::OnDetach() {
 }
 
 void CGameLayer::InitializeCamera() {
-    this->m_LastX = this->m_Window->width / 2.0f;
-    this->m_LastY = this->m_Window->height / 2.0f;
+    this->m_LastX = VK::CApplication::GetWindowSize().x / 2.0f;
+    this->m_LastY = VK::CApplication::GetWindowSize().y / 2.0f;
 
     this->m_CameraPosition = glm::vec3(0, 0, 5);
 
     this->m_CameraMoveSpeed = 4.5f;
     this->m_FieldOfView = 90.f;
 
-    this->m_Camera = std::make_unique<VK::CPerspectiveCamera>((float)this->m_Window->width, (float)this->m_Window->height);
+    this->m_Camera = std::make_unique<VK::CPerspectiveCamera>((float)VK::CApplication::GetWindowSize().x, (float)VK::CApplication::GetWindowSize().y);
 
     this->m_Camera->SetFieldOfView(this->m_FieldOfView);
     this->m_Camera->SetMovementSpeed(this->m_CameraMoveSpeed);
     this->m_Camera->SetMouseSensitivity(.1f);
 }
 
-void CGameLayer::initializeKeybinds() {
+void CGameLayer::InitializeKeybinds() {
     this->m_Keys.push_back(GLFW_KEY_W);
     this->m_Keys.push_back(GLFW_KEY_A);
     this->m_Keys.push_back(GLFW_KEY_S);
@@ -205,65 +208,64 @@ void CGameLayer::initializeKeybinds() {
     this->m_Keys.push_back(GLFW_MOUSE_BUTTON_RIGHT);
     this->m_Keys.push_back(GLFW_MOUSE_BUTTON_LEFT);
 
-    this->m_KeyboardControls = std::make_unique<VK::CInput>(this->m_Keys);
-    this->m_KeyboardControls->SetIsEnabled(true);
-    this->m_KeyboardControls->SetupKeyInputs(*this->m_Window->window);
+    VK::CInput::SetupKeyInputs(*VK::CApplication::GetWindow(), this->m_Keys);
+    VK::CInput::SetIsEnabled(true);
 }
 
 void CGameLayer::UpdateCamera(const float& dt) {
      this->m_Camera->UpdateUniforms(this->GetShader("PBR"));
 
-    if (this->m_MousePositionX != this->m_LastX || this->m_MousePositionY != this->m_LastY) {
+    if (VK::CApplication::GetMousePosition().x != this->m_LastX || VK::CApplication::GetMousePosition().y != this->m_LastY) {
         if (firstMouse) {
-            this->m_LastX = this->m_MousePositionX;
-            this->m_LastY = this->m_MousePositionY;
+            this->m_LastX = VK::CApplication::GetMousePosition().x;
+            this->m_LastY = VK::CApplication::GetMousePosition().y;
             firstMouse = false;
         }
 
-        double xoffset = this->m_MousePositionX - this->m_LastX;
-        double yoffset = this->m_LastY - this->m_MousePositionY;
+        double xoffset = VK::CApplication::GetMousePosition().x - this->m_LastX;
+        double yoffset = this->m_LastY - VK::CApplication::GetMousePosition().y;
 
-        this->m_LastX = this->m_MousePositionX;
-        this->m_LastY = this->m_MousePositionY;
+        this->m_LastX = VK::CApplication::GetMousePosition().x;
+        this->m_LastY = VK::CApplication::GetMousePosition().y;
 
         this->m_Camera->Update(xoffset, yoffset, true);
     }
 }
 
 void CGameLayer::UpdateControls(const float& dt) {
-    glfwGetCursorPos(this->m_Window->window, &this->m_MousePositionX, &this->m_MousePositionY);
+//    glfwGetCursorPos(VK::CApplication::GetWindow(), &VK::CApplication::GetMousePosition().x, &VK::CApplication::GetMousePosition().y);
     float velocity = this->m_CameraMoveSpeed * dt;
 
-    if (this->m_KeyboardControls->IsKeyUp(GLFW_KEY_ESCAPE)) {
-        glfwTerminate();
+    if (VK::CInput::IsKeyUp(GLFW_KEY_ESCAPE)) {
+        VK::CApplication::Shutdown();
     }
 
     if (!this->m_MouseEnabled) {
         // x
-        if (this->m_KeyboardControls->IsKeyDown(GLFW_KEY_A)) {
+        if (VK::CInput::IsKeyDown(GLFW_KEY_A)) {
             this->m_CameraPosition -= this->m_Camera->GetRight() * velocity;
-        } else if (this->m_KeyboardControls->IsKeyDown(GLFW_KEY_D)) {
+        } else if (VK::CInput::IsKeyDown(GLFW_KEY_D)) {
             this->m_CameraPosition += this->m_Camera->GetRight() * velocity;
         }
 
         // y
-        if (this->m_KeyboardControls->IsKeyDown(GLFW_KEY_LEFT_CONTROL)) {
+        if (VK::CInput::IsKeyDown(GLFW_KEY_LEFT_CONTROL)) {
             this->m_CameraPosition -= this->m_Camera->GetUp() * velocity;
-        } else if (this->m_KeyboardControls->IsKeyDown(GLFW_KEY_SPACE)) {
+        } else if (VK::CInput::IsKeyDown(GLFW_KEY_SPACE)) {
             this->m_CameraPosition += this->m_Camera->GetUp() * velocity;
         }
 
         // z
-        if (this->m_KeyboardControls->IsKeyDown(GLFW_KEY_W)) {
+        if (VK::CInput::IsKeyDown(GLFW_KEY_W)) {
             this->m_CameraPosition += this->m_Camera->GetFront() * velocity;
-        } else if (this->m_KeyboardControls->IsKeyDown(GLFW_KEY_S)) {
+        } else if (VK::CInput::IsKeyDown(GLFW_KEY_S)) {
             this->m_CameraPosition -= this->m_Camera->GetFront() * velocity;
         }
 
         // speed
-        if (this->m_KeyboardControls->IsKeyDown(GLFW_KEY_LEFT_SHIFT)) {
+        if (VK::CInput::IsKeyDown(GLFW_KEY_LEFT_SHIFT)) {
             this->m_CameraMoveSpeed = 8.f;
-        } else if (this->m_KeyboardControls->IsKeyDown(GLFW_KEY_LEFT_ALT)) {
+        } else if (VK::CInput::IsKeyDown(GLFW_KEY_LEFT_ALT)) {
             this->m_CameraMoveSpeed = 2.f;
         } else {
             this->m_CameraMoveSpeed = 4.f;

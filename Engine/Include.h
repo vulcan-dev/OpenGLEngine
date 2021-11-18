@@ -5,6 +5,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "Utility.h"
+#include "Resources.h"
+
 #include "Core/Utilities/Logger.h"
 #include "Core/Input.h"
 #include "Core/Window.h"

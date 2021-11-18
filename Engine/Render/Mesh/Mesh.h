@@ -74,6 +74,7 @@ namespace VK {
 		glm::vec3 m_Origin;
 		glm::vec3 m_Rotation;
 		glm::vec3 m_Scale;
+
 		int m_Type;
 
 		Vertex * m_VertexArray;

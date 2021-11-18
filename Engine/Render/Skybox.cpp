@@ -346,8 +346,9 @@ namespace VK {
     }
 
     void CSkybox::Render(CPerspectiveCamera* camera, glm::vec3 cameraPos) {
-        this->m_Shaders["PBR"]->Bind();
         glm::mat4 view = camera->GetView();
+
+        this->m_Shaders["PBR"]->Bind();
         this->m_Shaders["PBR"]->SetMat4fv(view, "view");
         this->m_Shaders["PBR"]->SetVec3f(cameraPos, "camPos");
         this->m_Shaders["PBR"]->Unbind();
@@ -360,7 +361,7 @@ namespace VK {
         glBindTexture(GL_TEXTURE_2D, this->m_brdfLUTTexture);
 
         this->m_Shaders["BGShader"]->Bind();
-        this->m_Shaders["BGShader"]->SetMat4fv(camera->GetView(), "view");
+        this->m_Shaders["BGShader"]->SetMat4fv(view, "view");
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, this->m_Cubemap);
         glActiveTexture(0);

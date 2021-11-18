@@ -3,28 +3,19 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 
+#include "../Resources.h"
+
 namespace VK {
+    CShader::CShader(bool create) {
+        Resources::LoadShader("Default", "Shaders/VertexCore.vs", "Shaders/FragmentCore.vs");
+        if (create) {
+//            CShader* defaultShader = Resources::LoadShader("Default", "Shaders/VertexCore.vs", "Shaders/FragmentCore.fs");
+//            CShader* defaultPbr = Resources::LoadShader("PBR", "Shaders/PBR.vs", "Shaders/PBR.fs");
+        }
+    }
+
     CShader::CShader(std::string_view vertexFile, std::string_view fragmentFile, std::string_view geometryFile) {
-        GLuint vertexShader = 0;
-        GLuint fragmentShader = 0;
-        GLuint geometryShader = 0;
-        GLuint shader = 0;
-
-        shader = this->LoadFromFile(vertexFile.data(), fragmentFile.data());
-
-//        vertexShader = this->LoadFromFile(GL_VERTEX_SHADER, vertexFile.data());
-//        fragmentShader = this->LoadFromFile(GL_FRAGMENT_SHADER, fragmentFile.data());
-//        if (geometryFile != "") geometryShader = this->LoadFromFile(GL_GEOMETRY_SHADER, geometryFile.data());
-//
-//        CORE_INFO("Loaded Shaders: {} {} {}", vertexFile, fragmentFile, geometryFile);
-//
-//        if (vertexShader != 0 && fragmentShader != 0) {
-//            this->LinkProgram(vertexShader, fragmentShader, geometryShader);
-//
-//            glDeleteShader(vertexShader);
-//            glDeleteShader(fragmentShader);
-//            glDeleteShader(geometryShader);
-//        }
+        this->LoadFromFile(vertexFile.data(), fragmentFile.data());
     }
 
     GLuint CShader::LoadFromFile(std::string vertex_file_path, std::string fragment_file_path) {
@@ -175,45 +166,31 @@ namespace VK {
     }
 
     void CShader::Set1i(GLint value, const GLchar* name) {
-        // this->Bind();
         glUniform1i(glGetUniformLocation(this->m_ProgramID, name), value);
-        // this->Unbind();
     }
 
     void CShader::Set1f(GLfloat value, const GLchar* name) {
-        // this->Bind();
         glUniform1f(glGetUniformLocation(this->m_ProgramID, name), value);
-        // this->Unbind();
     }
 
     void CShader::SetVec3f(glm::vec3 value, const GLchar* name) {
-        // this->Bind();
         glUniform3fv(glGetUniformLocation(this->m_ProgramID, name), 1, glm::value_ptr(value));
-        // this->Unbind();
     }
 
     void CShader::SetVec3f(glm::vec3 value, const std::string& name) {
-        // this->Bind();
         glUniform3fv(glGetUniformLocation(this->m_ProgramID, name.c_str()), 1, glm::value_ptr(value));
-        // this->Unbind();
     }
 
     void CShader::SetVec4f(glm::vec4 value, const GLchar* name) {
-        // this->Bind();
         glUniform4fv(glGetUniformLocation(this->m_ProgramID, name), 1, glm::value_ptr(value));
-        // this->Unbind();
     }
 
     void CShader::SetMat3fv(glm::mat3 value, const GLchar* name, GLboolean transpose) {
-        // this->Bind();
         glUniformMatrix3fv(glGetUniformLocation(this->m_ProgramID, name), 1, transpose, glm::value_ptr(value));
-        // this->Unbind();
     }
 
     void CShader::SetMat4fv(glm::mat4 value, const GLchar* name, GLboolean transpose) {
-        // this->Bind();
         glUniformMatrix4fv(glGetUniformLocation(this->m_ProgramID, name), 1, transpose, glm::value_ptr(value));
-        // this->Unbind();
     }
 
     CShader::~CShader() {

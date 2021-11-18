@@ -8,6 +8,7 @@
 namespace VK {
     class CTexture {
     public:
+        CTexture() {}
         CTexture(std::string filename, GLenum type = GL_TEXTURE_2D);
 
         inline GLuint GetID() const { return this->m_ID; }

@@ -7,7 +7,7 @@ namespace VK {
     public:
         CLayer(std::string_view name = "Layer") : m_Name(name) {}
 
-        virtual void OnAttach(CWindow* window) {}
+        virtual void OnAttach() {}
         virtual void OnDetach() {}
         virtual void OnUpdate(const float& dt) {}
         virtual void OnRender(const float& dt) {}

@@ -4,9 +4,32 @@
 #include <string>
 #include <vector>
 
+/*
+ * Variables
+ */
 namespace VK {
-    CApplication* CApplication::m_Instance = nullptr;
+    CApplication *CApplication::m_Instance = nullptr;
+    std::string_view CApplication::m_WindowTitle = "";
+    CLayerStack CApplication::m_LayerStack;
 
+    float CApplication::m_DeltaTime = 0.f;
+    float CApplication::m_CurrentTime = 0.f;
+    float CApplication::m_LastTime = 0.f;
+    uint16_t CApplication::m_Framerate = 0;
+
+    GLint CApplication::m_OpenGLMajor, CApplication::m_OpenGLMinor = 0;
+    CWindow *CApplication::m_Window = nullptr;
+    CInput CApplication::m_Input;
+
+    uint32_t CApplication::m_WindowWidth, CApplication::m_WindowHeight;
+
+    double CApplication::m_MousePositionX, CApplication::m_MousePositionY;
+}
+
+namespace VK {
+    /*
+     * GLFW Callbacks
+     */
     void CApplication::error_callback(int error, const char* description) {
         CORE_ERROR("GLFW Error: {} - {}", error, description);
     }
@@ -17,28 +40,27 @@ namespace VK {
     }
 
     CApplication::CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle, bool borderless) {
-        this->m_Window = new CWindow{static_cast<int>(windowWidth), static_cast<int>(windowHeight), windowTitle};
+        CApplication::m_Instance = this;
+        CApplication::m_Instance->m_Window = new CWindow{static_cast<int>(windowWidth), static_cast<int>(windowHeight), windowTitle};
 
-        glfwSetErrorCallback(this->error_callback);
+        glfwSetErrorCallback(CApplication::m_Instance->error_callback);
 
         if (!glfwInit()) {
             CORE_CRITICAL("glfwInit failed");
             exit(1);
         }
 
-        this->CreateWindow(borderless);
+        CApplication::m_Instance->CreateWindow(borderless);
+        CApplication::m_Instance->InitializeOpenGL();
 
-        this->InitializeOpenGL();
-
-        CApplication::m_Instance = this;
         for (CLayer* Layer : m_LayerStack) {
-            Layer->OnAttach(this->m_Window);
+            Layer->OnAttach();
         }
     }
 
     void CApplication::PushLayer(CLayer* layer) {
-        this->m_LayerStack.PushLayer(layer);
-        layer->OnAttach(this->m_Window);
+        CApplication::m_Instance->m_LayerStack.PushLayer(layer);
+        layer->OnAttach();
     }
 
     void CApplication::InitializeOpenGL() {
@@ -50,11 +72,11 @@ namespace VK {
 
         // glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
-        glfwSetFramebufferSizeCallback(this->m_Window->window, this->window_size_callback);
+        glfwSetFramebufferSizeCallback(CApplication::m_Instance->m_Window->window, CApplication::m_Instance->window_size_callback);
 
-        glGetIntegerv(GL_MAJOR_VERSION, &this->m_OpenGLMajor);
-        glGetIntegerv(GL_MINOR_VERSION, &this->m_OpenGLMinor);
-        CORE_INFO("OpenGL Version: {}.{}", this->m_OpenGLMajor, this->m_OpenGLMinor);
+        glGetIntegerv(GL_MAJOR_VERSION, &CApplication::m_Instance->m_OpenGLMajor);
+        glGetIntegerv(GL_MINOR_VERSION, &CApplication::m_Instance->m_OpenGLMinor);
+        CORE_INFO("OpenGL Version: {}.{}", CApplication::m_Instance->m_OpenGLMajor, CApplication::m_Instance->m_OpenGLMinor);
         CORE_INFO("Version: {}", glGetString(GL_VERSION));
         CORE_INFO("Graphics Card: {}", glGetString(GL_RENDERER));
         CORE_INFO("Shader Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
@@ -63,6 +85,9 @@ namespace VK {
         glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount); 
 
         CORE_INFO("{} Extensions Supported", extensionCount);
+
+        glfwGetFramebufferSize(CApplication::m_Instance->m_Window->window, &CApplication::m_Instance->m_Window->width, &CApplication::m_Instance->m_Window->height);
+        glViewport(0, 0, CApplication::m_Instance->m_Window->width, CApplication::m_Instance->m_Window->height);
     }
 
     void CApplication::CreateWindow(bool borderless) {
@@ -78,46 +103,55 @@ namespace VK {
         if (borderless) {
             glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
             glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-            this->m_Window->window = glfwCreateWindow(mode->width, mode->height, this->m_Window->title.data(), glfwGetPrimaryMonitor(), nullptr);    
+            CApplication::m_Instance->m_Window->window = glfwCreateWindow(mode->width, mode->height, CApplication::m_Instance->m_Window->title.data(), glfwGetPrimaryMonitor(), nullptr);
         } else {
-            this->m_Window->window = glfwCreateWindow(this->m_Window->width, this->m_Window->height, this->m_Window->title.data(), nullptr, nullptr);
-            glfwSetWindowSizeLimits(this->m_Window->window, 800, 600, GLFW_DONT_CARE, GLFW_DONT_CARE);
+            CApplication::m_Instance->m_Window->window = glfwCreateWindow(CApplication::m_Instance->m_Window->width, CApplication::m_Instance->m_Window->height, CApplication::m_Instance->m_Window->title.data(), nullptr, nullptr);
+            glfwSetWindowSizeLimits(CApplication::m_Instance->m_Window->window, 800, 600, GLFW_DONT_CARE, GLFW_DONT_CARE);
         }
 
-        CORE_INFO("Created Window: {} x {}", this->m_Window->width, this->m_Window->height);
+        CORE_INFO("Created Window: {} x {}", CApplication::m_Instance->m_Window->width, CApplication::m_Instance->m_Window->height);
 
-        glfwMakeContextCurrent(this->m_Window->window);
+        glfwMakeContextCurrent(CApplication::m_Instance->m_Window->window);
         glewInit();
     }
 
     void CApplication::Run() {
-        while (this->IsRunning()) {
-            this->Update();
+        while (CApplication::m_Instance->IsRunning()) {
+            CApplication::m_Instance->Update();
 
-            this->UpdateTime();
-            this->UpdateInput();
+            CApplication::m_Instance->UpdateTime();
+            CApplication::m_Instance->UpdateInput();
 
-            this->Render();
+            CApplication::m_Instance->Render();
         }
     }
 
+    void CApplication::Shutdown() {
+        for (CLayer* Layer : m_LayerStack) {
+            Layer->OnDetach();
+        }
+
+        glfwSetWindowShouldClose(CApplication::m_Instance->m_Window->window, true);
+        delete CApplication::m_Instance;
+    }
+
     void CApplication::UpdateInput() {
-        glfwGetCursorPos(this->m_Window->window, &this->m_MousePositionX, &this->m_MousePositionY);
+        glfwGetCursorPos(CApplication::m_Instance->m_Window->window, &CApplication::m_Instance->m_MousePositionX, &CApplication::m_Instance->m_MousePositionY);
     }
 
     void CApplication::UpdateTime() {
-        this->m_CurrentTime = static_cast<float>(glfwGetTime());
-        this->m_DeltaTime = this->m_CurrentTime - this->m_LastTime;
-        this->m_LastTime = this->m_CurrentTime;
+        CApplication::m_Instance->m_CurrentTime = static_cast<float>(glfwGetTime());
+        CApplication::m_Instance->m_DeltaTime = CApplication::m_Instance->m_CurrentTime - CApplication::m_Instance->m_LastTime;
+        CApplication::m_Instance->m_LastTime = CApplication::m_Instance->m_CurrentTime;
 
-        this->m_Framerate = static_cast<int16_t>(1.f/this->m_DeltaTime);
+        CApplication::m_Instance->m_Framerate = static_cast<int16_t>(1.f/CApplication::m_Instance->m_DeltaTime);
     }
 
     void CApplication::Update() {
         glfwPollEvents();
 
         for (CLayer* Layer : m_LayerStack) {
-            Layer->OnUpdate(this->m_DeltaTime);
+            Layer->OnUpdate(CApplication::m_Instance->m_DeltaTime);
         }
     }
 
@@ -125,14 +159,48 @@ namespace VK {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        for (CLayer* Layer : m_LayerStack) {
-            Layer->OnRender(this->m_DeltaTime);
+        for (CLayer* Layer : CApplication::m_Instance->m_LayerStack) {
+            Layer->OnRender(CApplication::m_Instance->m_DeltaTime);
         }
 
-        glfwSwapBuffers(this->m_Window->window);
+        glfwSwapBuffers(CApplication::m_Instance->m_Window->window);
     }
 
     CApplication::~CApplication() {
-        delete this->m_Window;
+
+    }
+
+    bool CApplication::IsRunning() {
+        return !glfwWindowShouldClose(CApplication::m_Instance->m_Window->window);
+    }
+
+    /*
+     * Window Specific Functions
+     */
+    GLFWwindow *CApplication::GetWindow() {
+        return CApplication::m_Instance->m_Window->window;
+    }
+
+    uint32_t CApplication::GetWindowWidth() {
+        return CApplication::m_Instance->m_Window->width;
+    }
+
+    uint32_t CApplication::GetWindowHeight() {
+        return CApplication::m_Instance->m_Window->height;
+    }
+
+    glm::vec2 CApplication::GetWindowSize() {
+        return glm::vec2(CApplication::m_Instance->m_Window->width, CApplication::m_Instance->m_Window->height);
+    }
+
+    /*
+     * Other Functions
+     */
+    float CApplication::GetDeltaTime() {
+        return CApplication::m_Instance->m_DeltaTime;
+    }
+
+    glm::vec2 CApplication::GetMousePosition() {
+        return glm::vec2(CApplication::m_Instance->m_MousePositionX, CApplication::m_Instance->m_MousePositionY);
     }
 }

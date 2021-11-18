@@ -11,6 +11,8 @@
 namespace VK {
     class CShader {
     public:
+        CShader() {}
+        CShader(bool create);
         CShader(std::string_view vertexFile, std::string_view fragmentFile, std::string_view geometryFile = "");
 
         GLuint LoadFromFile(std::string vertex_file_path, std::string fragment_file_path);

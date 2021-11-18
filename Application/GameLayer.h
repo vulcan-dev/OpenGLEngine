@@ -5,12 +5,13 @@
 
 #include "Interface.h"
 #include "Events.h"
+#include "../Engine/Application.h"
 
 class CGameLayer : public VK::CLayer {
 public:
     CGameLayer();
 
-    void OnAttach(VK::CWindow* window) override;
+    void OnAttach() override;
     void OnDetach() override;
 
     void OnUpdate(const float& dt) override;
@@ -22,7 +23,7 @@ public:
 
 private:
     void InitializeCamera();
-    void initializeKeybinds();
+    void InitializeKeybinds();
 
     void UpdateObjects(const float& dt);
     void UpdateCamera(const float& dt);
@@ -56,7 +57,6 @@ private:
     std::map<std::string, Ref<VK::CModel>> m_Models;
 
     Ref<VK::CPerspectiveCamera> m_Camera;
-    Ref<VK::CInput> m_KeyboardControls;
     Ref<VK::CSkybox> m_Skybox;
 
     Ref<VK::CLine> m_DebugLine;

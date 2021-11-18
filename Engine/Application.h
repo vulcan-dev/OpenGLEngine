@@ -8,48 +8,67 @@ namespace VK {
     public:
         CApplication(const uint32_t& windowWidth, const uint32_t& windowHeight, std::string_view windowTitle, bool borderless = false);
 
-        void OnAttach(CWindow* window);
+        void OnAttach();
         void OnDetatch();
 
         void Run();
 
         virtual ~CApplication();
 
+    public:
+        /*
+         * GLFW Specific Abstractions
+         */
+        static void SetCursorPosition();
+        static void SetInputMode();
+
+        /*
+         * Window Specific Functions
+         */
+        static GLFWwindow* GetWindow();
+        static uint32_t GetWindowWidth();
+        static uint32_t GetWindowHeight();
+        static glm::vec2 GetWindowSize();
+
+        /*
+         * Other Functions
+         */
+        static float GetDeltaTime();
+        static glm::vec2 GetMousePosition();
+        static void Shutdown();
+
     protected:
-        void PushLayer(CLayer* layer);
-
-        inline bool IsRunning() { return !glfwWindowShouldClose(this->m_Window->window); }
-
-        inline GLFWwindow* GetWindow() { return this->m_Window->window; }
-        inline const float& GetDeltaTime() const { return this->m_DeltaTime; }
-
-        uint32_t m_WindowWidth, m_WindowHeight;
-
-        double m_MousePositionX, m_MousePositionY;
+        static void PushLayer(CLayer* layer);
 
     private:
-        void CreateWindow(bool borderless);
-        void InitializeOpenGL();
-        void UpdateTime();
-        void UpdateInput();
-        void Update();
-        void Render();
+        static void CreateWindow(bool borderless);
+        static void InitializeOpenGL();
+        static void UpdateTime();
+        static void UpdateInput();
+        static void Update();
+        static void Render();
+
+        static bool IsRunning();
 
     private:
         static void error_callback(int error, const char* description);
         static void window_size_callback(GLFWwindow* window, int width, int height);
 
     private:
-        std::string_view m_WindowTitle;
-        CLayerStack m_LayerStack;
+        static std::string_view m_WindowTitle;
+        static CLayerStack m_LayerStack;
         static CApplication* m_Instance;
 
-        float m_DeltaTime;
-        float m_CurrentTime;
-        float m_LastTime;
-        uint16_t m_Framerate;
+        static float m_DeltaTime;
+        static float m_CurrentTime;
+        static float m_LastTime;
+        static uint16_t m_Framerate;
 
-        GLint m_OpenGLMajor, m_OpenGLMinor;
-        CWindow* m_Window;
+        static GLint m_OpenGLMajor, m_OpenGLMinor;
+        static CInput m_Input;
+        static CWindow* m_Window;
+
+        static uint32_t m_WindowWidth, m_WindowHeight;
+        static double m_MousePositionX, m_MousePositionY;
     };
 }

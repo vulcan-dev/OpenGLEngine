@@ -8,6 +8,8 @@
 namespace VK {
     class CMaterial {
     public:
+        CMaterial() {}
+
         CMaterial(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, GLint diffuseTexture, GLint specularTexture) {
             this->m_Ambient = ambient;
             this->m_Diffuse = diffuse;
