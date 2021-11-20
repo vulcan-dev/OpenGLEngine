@@ -1,17 +1,14 @@
 #include "Application.h"
+#include "Utilities/Logger.h"
 #include "../Application/App.h"
 
-int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
-    VK::Logger::Initialize();
-#ifdef DEBUG_MODE
-    spdlog::set_level(spdlog::level::debug);
-#endif
+int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
+    Vision::Logger::Initialize();
 
-    auto app = CreateApplication();
+    Vision::Application* Application = CreateApplication();
+    Application->Run();
 
-    app->Run();
-
-    delete app;
+    delete Application;
 
     return 0;
 }

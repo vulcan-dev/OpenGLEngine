@@ -1,18 +1,19 @@
 #pragma once
 
-#include "GameLayer.h"
+#include "../Engine/Application.h"
+#include "Game.h"
 
-static VK::CApplication* CreateApplication();
+static Vision::Application* CreateApplication();
 
-class CApp : public VK::CApplication {
+class App : public Vision::Application {
 public:
-    CApp() : VK::CApplication(1920, 1080, "OpenGL Engine", true) {
-        PushLayer(new CGameLayer());
+    App() : Vision::Application(1280, 960, "Vision Application") {
+        PushLayer(new Game());
     }
 
-    ~CApp() {}
+    ~App() {}
 };
 
-VK::CApplication* CreateApplication() {
-    return new CApp();
+Vision::Application* CreateApplication() {
+    return new App();
 }

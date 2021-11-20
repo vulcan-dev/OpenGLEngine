@@ -25,7 +25,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 # The main executable
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_MODE")
-add_executable(main ${SOURCE_FILES} Application/Events.h)
+add_executable(main ${SOURCE_FILES} Application/Game.cpp)
 
 set(LIBS glfw libglew_static glm spdlog::spdlog)
 
