@@ -8,10 +8,6 @@
 namespace VK {
     CShader::CShader(bool create) {
         Resources::LoadShader("Default", "Shaders/VertexCore.vs", "Shaders/FragmentCore.vs");
-        if (create) {
-//            CShader* defaultShader = Resources::LoadShader("Default", "Shaders/VertexCore.vs", "Shaders/FragmentCore.fs");
-//            CShader* defaultPbr = Resources::LoadShader("PBR", "Shaders/PBR.vs", "Shaders/PBR.fs");
-        }
     }
 
     CShader::CShader(std::string_view vertexFile, std::string_view fragmentFile, std::string_view geometryFile) {
